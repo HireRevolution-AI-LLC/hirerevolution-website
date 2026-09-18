@@ -2,7 +2,6 @@
 # terraform.tfvars is .gitignored for security
 
 do_token       = "dop_v1_YOUR_DIGITALOCEAN_TOKEN_HERE"
-ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5... your-key@host"
 
 # Optional overrides
 droplet_name   = "hirerevolution-website-staging"

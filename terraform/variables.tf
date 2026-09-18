@@ -4,16 +4,10 @@ variable "do_token" {
   sensitive   = true
 }
 
-variable "ssh_key_name" {
-  description = "Name of SSH key in DigitalOcean"
-  type        = string
-  default     = "hirerevolution-main"
-}
-
-variable "ssh_public_key" {
-  description = "SSH public key content"
-  type        = string
-  sensitive   = true
+variable "ssh_key_names" {
+  description = "Names of SSH keys already in the DigitalOcean account to authorize on the droplet"
+  type        = list(string)
+  default     = ["infra-key", "FE_ssh"]
 }
 
 variable "droplet_name" {

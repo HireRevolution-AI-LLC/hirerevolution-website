@@ -1,56 +1,36 @@
 #!/bin/bash
-set -e
+# Rendered by templatefile(): only $${...} is interpolated, so use $VAR (no braces) for shell vars.
+set -euxo pipefail
+export HOME=/root
+export DEBIAN_FRONTEND=noninteractive
+APT="apt-get -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
 
-echo "🚀 HireRevolution Website - Initial Deployment"
+# next build needs more than 1GB RAM
+fallocate -l 2G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile
+echo '/swapfile none swap sw 0 0' >> /etc/fstab
 
-# Update system
 apt-get update
-apt-get upgrade -y
-
-# Install Node.js 18
-curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
-apt-get install -y nodejs
-
-# Install PM2 globally
+$APT upgrade
+curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+$APT install nodejs git nginx
 npm install -g pm2
 
-# Install Git
-apt-get install -y git
-
-# Install Nginx
-apt-get install -y nginx
-
-# Install Certbot
-apt-get install -y certbot python3-certbot-nginx
-
-# Create app directory
-mkdir -p /var/www/hirerevolution-website
+git clone ${github_repo} /var/www/hirerevolution-website
 cd /var/www/hirerevolution-website
-
-# Clone repository
-git clone ${github_repo} .
-
-# Install dependencies
-npm install --omit=dev
-
-# Build Next.js
+npm ci
 npm run build
-
-# Configure PM2
-pm2 start ecosystem.config.js --name hirerevolution-website
+pm2 start ecosystem.config.js
 pm2 save
-pm2 startup -u root --hp /root
+pm2 startup systemd -u root --hp /root
 
-# Configure Nginx
 cat > /etc/nginx/sites-available/default <<'NGINX_CONF'
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
-
     server_name _;
 
     location / {
-        proxy_pass http://localhost:3000;
+        proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -62,15 +42,7 @@ server {
     }
 }
 NGINX_CONF
-
-# Test and start Nginx
 nginx -t
-systemctl restart nginx
 systemctl enable nginx
-
-# Create log directory for PM2
-mkdir -p /var/www/hirerevolution-website/logs
-
-echo "✅ Initial deployment complete"
-echo "App is running on port 3000"
-echo "Nginx is reverse proxying on port 80"
+systemctl restart nginx
+echo "HIREREV_BOOTSTRAP_DONE"

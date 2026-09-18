@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  NODE_VERSION: "18"
+  NODE_VERSION: "22"
 
 jobs:
   deploy:
@@ -30,7 +30,7 @@ jobs:
         run: npm run build
 
       - name: Deploy to staging
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.STAGING_HOST }}
           username: root
@@ -40,20 +40,11 @@ jobs:
             echo "🚀 Deploying HireRevolution website..."
 
             cd /var/www/hirerevolution-website
-
-            # Pull latest code
-            git pull origin main
-
-            # Install dependencies
-            npm ci --omit=dev
-
-            # Build
+            git fetch origin main
+            git reset --hard origin/main
+            npm ci
             npm run build
-
-            # Restart PM2
-            pm2 restart hirerevolution-website
-
-            echo "✅ Deployment complete"
+            pm2 reload ecosystem.config.js --update-env
             pm2 status
 
       - name: Notify deployment status
