@@ -28,6 +28,11 @@ output "website_url" {
   value       = "http://${digitalocean_droplet.website.ipv4_address}"
 }
 
+output "staging_url" {
+  description = "Staging URL (HTTPS once certbot succeeds)"
+  value       = "https://${var.site_domain}"
+}
+
 output "status" {
   description = "Deployment status"
   value       = "✅ Droplet created. App is deploying (may take 2-3 minutes). Visit http://${digitalocean_droplet.website.ipv4_address} to test."

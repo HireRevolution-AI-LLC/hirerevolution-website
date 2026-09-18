@@ -39,3 +39,9 @@ variable "app_port" {
   type        = number
   default     = 3000
 }
+
+variable "site_domain" {
+  description = "Hostname this droplet serves and gets a Let's Encrypt cert for (DNS-only A record -> reserved IP)"
+  type        = string
+  default     = "staging.hirerevolution.ai"
+}

@@ -12,7 +12,7 @@ echo '/swapfile none swap sw 0 0' >> /etc/fstab
 apt-get update
 $APT upgrade
 curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
-$APT install nodejs git nginx
+$APT install nodejs git nginx certbot python3-certbot-nginx
 npm install -g pm2
 
 git clone ${github_repo} /var/www/hirerevolution-website
@@ -27,7 +27,7 @@ cat > /etc/nginx/sites-available/default <<'NGINX_CONF'
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
-    server_name _;
+    server_name ${site_domain} _;
 
     location / {
         proxy_pass http://127.0.0.1:3000;
@@ -45,4 +45,8 @@ NGINX_CONF
 nginx -t
 systemctl enable nginx
 systemctl restart nginx
+
+# HTTPS for the staging hostname. Non-fatal: the site still serves on :80 if DNS isn't pointed here yet.
+certbot --nginx -d ${site_domain} --non-interactive --agree-tos --register-unsafely-without-email --redirect \
+  || echo "WARN: certbot failed for ${site_domain}; rerun it once DNS resolves to this droplet"
 echo "HIREREV_BOOTSTRAP_DONE"

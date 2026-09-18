@@ -33,6 +33,7 @@ resource "digitalocean_droplet" "website" {
 
   user_data = templatefile("${path.module}/user_data.sh", {
     github_repo = "https://github.com/HireRevolution-AI-LLC/hirerevolution-website.git"
+    site_domain = var.site_domain
   })
 }
 
