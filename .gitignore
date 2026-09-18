@@ -58,3 +58,6 @@ terraform/terraform.rc
 # logs
 logs/
 *.log
+
+# IDE
+.idea/
