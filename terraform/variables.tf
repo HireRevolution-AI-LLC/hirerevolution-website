@@ -45,3 +45,9 @@ variable "site_domain" {
   type        = string
   default     = "staging.hirerevolution.ai"
 }
+
+variable "deploy_public_key_path" {
+  description = "Public half of the GitHub Actions deploy key"
+  type        = string
+  default     = "~/.ssh/hirerevolution_website_deploy.pub"
+}

@@ -12,10 +12,16 @@ provider "digitalocean" {
   token = var.do_token
 }
 
-# Existing account keys: infra-key (operator) and FE_ssh (the key GitHub Actions deploys with)
+# Existing account keys for operator access: infra-key (~/.ssh/id_ed25519_infra) and FE_ssh (~/.ssh/id_ed25519)
 data "digitalocean_ssh_key" "authorized" {
   for_each = toset(var.ssh_key_names)
   name     = each.value
+}
+
+# Passphrase-less key used only by GitHub Actions (its private half is the SSH_PRIVATE_KEY repo secret)
+resource "digitalocean_ssh_key" "deploy" {
+  name       = "hirerevolution-website-deploy"
+  public_key = file(pathexpand(var.deploy_public_key_path))
 }
 
 # Create droplet using existing SSH key
@@ -27,7 +33,7 @@ resource "digitalocean_droplet" "website" {
   backups            = false
   ipv6               = true
   monitoring         = true
-  ssh_keys           = [for k in data.digitalocean_ssh_key.authorized : k.id]
+  ssh_keys           = concat([for k in data.digitalocean_ssh_key.authorized : k.id], [digitalocean_ssh_key.deploy.id])
 
   tags = ["website", var.environment]
 
