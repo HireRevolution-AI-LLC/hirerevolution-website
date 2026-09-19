@@ -1,18 +1,22 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
-export default function SubmitJDPage() {
-  const [formData, setFormData] = useState({
-    companyName: "",
-    companyWebsite: "",
-    companyEmail: "",
-    jobTitle: "",
-    jobDescription: "",
-  });
+const EMPTY_FORM = {
+  companyName: "",
+  companyWebsite: "",
+  hiringManagerName: "",
+  hiringManagerEmail: "",
+  jobDescription: "",
+  faxNumber: "", // honeypot, hidden from people
+};
 
-  const [submitted, setSubmitted] = useState(false);
+export default function SubmitJDPage() {
+  const [formData, setFormData] = useState(EMPTY_FORM);
+  const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -27,6 +31,7 @@ export default function SubmitJDPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
 
     try {
       const response = await fetch("/api/submit-jd", {
@@ -38,23 +43,23 @@ export default function SubmitJDPage() {
       });
 
       if (response.ok) {
-        setSubmitted(true);
-        setFormData({
-          companyName: "",
-          companyWebsite: "",
-          companyEmail: "",
-          jobTitle: "",
-          jobDescription: "",
-        });
+        setSubmittedEmail(formData.hiringManagerEmail.trim());
+        setFormData(EMPTY_FORM);
+      } else {
+        const body = await response.json().catch(() => ({}));
+        setError(
+          body.error ??
+            "Something went wrong. Please try again, or email your job description to support@hirerevolution.ai."
+        );
       }
-    } catch (error) {
-      console.error("Error submitting form:", error);
+    } catch {
+      setError("We couldn't reach our server. Check your connection and try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  if (submitted) {
+  if (submittedEmail) {
     return (
       <main className="flex-1">
         <section className="py-24 px-4 bg-gradient-to-br from-green-50 to-emerald-50">
@@ -75,34 +80,35 @@ export default function SubmitJDPage() {
               </svg>
             </div>
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Thanks for submitting!
+              You&apos;re all set!
             </h1>
             <p className="text-xl text-gray-600 mb-8">
-              We've received your job description and company info. Our team will process it within 24 hours and email you the results.
+              Our AI is building your job description now. In a few minutes you&apos;ll get an email at{" "}
+              <strong className="text-gray-900">{submittedEmail}</strong> with your free account and your first matched candidates.
             </p>
             <div className="bg-white rounded-lg p-8 mb-8 border border-gray-200">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">What happens next:</h2>
               <ul className="text-left space-y-3 text-gray-600">
                 <li className="flex items-start">
                   <span className="text-green-600 font-bold mr-3">1.</span>
-                  <span>We'll optimize your job description in HireRevolution AI</span>
+                  <span>Your job description is created in HireRevolution AI</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-green-600 font-bold mr-3">2.</span>
-                  <span>Run a candidate search across our talent pool</span>
+                  <span>We automatically search for candidates who have the skills it needs</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-green-600 font-bold mr-3">3.</span>
-                  <span>Email you matched candidates and an invite to your account</span>
+                  <span>You get an email with a link to your matched candidates. No resumes to read.</span>
                 </li>
               </ul>
             </div>
-            <a
+            <Link
               href="/"
               className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
             >
               Back to Home
-            </a>
+            </Link>
           </div>
         </section>
       </main>
@@ -118,7 +124,7 @@ export default function SubmitJDPage() {
               Submit Your Job Description
             </h1>
             <p className="text-xl text-gray-600">
-              Send us your JD and we'll create it in HireRevolution, search for matching candidates, and send you the results—all free, for a limited time.
+              Paste your JD and we&apos;ll create it in HireRevolution, search for matching candidates, and email you the results within minutes. Free, for a limited time.
             </p>
           </div>
 
@@ -131,18 +137,18 @@ export default function SubmitJDPage() {
                 {[
                   {
                     num: "1",
-                    title: "Fill Out the Form",
-                    desc: "Tell us about your company and the role you're hiring for.",
+                    title: "Paste Your JD",
+                    desc: "Your company, your work email, and the job description. That's it.",
                   },
                   {
                     num: "2",
-                    title: "We Process It",
-                    desc: "Our team creates the job in HireRevolution and searches for candidates.",
+                    title: "AI Does the Work",
+                    desc: "We create the job in HireRevolution and search for matching candidates.",
                   },
                   {
                     num: "3",
-                    title: "Get Results",
-                    desc: "We email you matched candidates and an invite to start hiring.",
+                    title: "Get Candidates",
+                    desc: "Minutes later, an email links you to your matches and your free account.",
                   },
                 ].map((step, idx) => (
                   <div key={idx} className="text-center">
@@ -190,36 +196,54 @@ export default function SubmitJDPage() {
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Company Email *
-                </label>
-                <input
-                  type="email"
-                  name="companyEmail"
-                  value={formData.companyEmail}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="hr@yourcompany.com"
-                />
-                <p className="text-xs text-gray-600 mt-1">
-                  We'll use this to verify your company and send results
-                </p>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Your Name *
+                  </label>
+                  <input
+                    type="text"
+                    name="hiringManagerName"
+                    value={formData.hiringManagerName}
+                    onChange={handleChange}
+                    required
+                    autoComplete="name"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Jane Doe"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    Your Work Email *
+                  </label>
+                  <input
+                    type="email"
+                    name="hiringManagerEmail"
+                    value={formData.hiringManagerEmail}
+                    onChange={handleChange}
+                    required
+                    autoComplete="email"
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="jane@yourcompany.com"
+                  />
+                  <p className="text-xs text-gray-600 mt-1">
+                    Your matched candidates are sent here
+                  </p>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Job Title
+              <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden">
+                <label>
+                  Fax number
+                  <input
+                    type="text"
+                    name="faxNumber"
+                    value={formData.faxNumber}
+                    onChange={handleChange}
+                    tabIndex={-1}
+                    autoComplete="off"
+                  />
                 </label>
-                <input
-                  type="text"
-                  name="jobTitle"
-                  value={formData.jobTitle}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="e.g., Senior Software Engineer"
-                />
               </div>
 
               <div>
@@ -231,26 +255,33 @@ export default function SubmitJDPage() {
                   value={formData.jobDescription}
                   onChange={handleChange}
                   required
+                  minLength={50}
                   rows={8}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
                   placeholder="Paste your job description here..."
                 />
                 <p className="text-xs text-gray-600 mt-1">
-                  Full JD or just key details—we'll enhance it either way
+                  At least 50 characters. Include the job title, and our AI pulls out the rest
                 </p>
               </div>
+
+              {error && (
+                <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                  {error}
+                </div>
+              )}
 
               <button
                 type="submit"
                 disabled={loading}
                 className="w-full bg-blue-600 text-white px-6 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition disabled:bg-gray-400"
               >
-                {loading ? "Submitting..." : "Submit Job Description"}
+                {loading ? "Sending..." : "Find My Candidates"}
               </button>
             </form>
 
             <p className="text-center text-sm text-gray-600 mt-6">
-              We'll review and get back to you within 24 hours. No credit card required.
+              Free for a limited time. No credit card required.
             </p>
           </div>
         </div>

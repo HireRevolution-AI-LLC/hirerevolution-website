@@ -238,6 +238,34 @@ This will:
 
 ---
 
+## Environments: website -> app
+
+The Submit JD form (`/offers/submit-jd`) creates the job through the app's
+`POST /api/jobs/create-3rd-party`, the endpoint behind the "Create Job
+Description" button on `/add-jd`. Each website server talks to one app
+environment:
+
+| Website | Env file | App API | Firebase project |
+| --- | --- | --- | --- |
+| staging.hirerevolution.ai | `config/.env.dev` | https://api-dev.hirerevolution.ai | hirerevolution-dev |
+| hirerevolution.ai | `config/.env.prod` | https://api.hirerevolution.ai | hirerevolution-d279d |
+
+Both files are gitignored. Each needs a service user in that environment's
+Firebase project whose customer record has `customer_type = content_creator`;
+put its email and password in `WEBSITE_SUBMITTER_EMAIL` /
+`WEBSITE_SUBMITTER_PASSWORD`. Then copy the file to the server and restart:
+
+```bash
+scripts/push-env.sh dev     # or: PROD_HOST=<ip> scripts/push-env.sh prod
+```
+
+It lands as `.env.production.local`, which survives deploys but not a droplet
+rebuild, so re-run it after `tofu apply` replaces the droplet. The dev app runs
+with SendGrid sandbox mode, so intro emails from staging go to the test inbox
+(or are not sent), never to the address typed into the form.
+
+---
+
 ## Monitoring & Logs
 
 ### Application logs
