@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AppApiNotConfiguredError, createThirdPartyJD } from "@/lib/app-api";
 import { clientIp, rateLimited } from "@/lib/rate-limit";
+import { appLogin } from "@/lib/links";
 import { verifyTurnstile } from "@/lib/turnstile";
+import { FREE_EMAIL_DOMAINS, emailDomain, normalizeWebsite, text } from "@/lib/validate";
 
 /**
  * Limited-time offer: a hiring manager submits a JD and we create it in
@@ -18,41 +20,10 @@ const MAX_JD_LENGTH = 100_000;
 const RATE_LIMIT = 3;
 const RATE_WINDOW_MS = 24 * 60 * 60_000;
 
-// The offer is for a work address; these can't tie a submitter to a company.
-const FREE_EMAIL_DOMAINS = new Set([
-  "gmail.com", "googlemail.com", "yahoo.com", "ymail.com", "outlook.com",
-  "hotmail.com", "live.com", "msn.com", "icloud.com", "me.com", "mac.com",
-  "aol.com", "proton.me", "protonmail.com", "gmx.com", "mail.com",
-  "yandex.com", "zoho.com",
-]);
-
-const APP_LOGIN_URL = "https://app.hirerevolution.ai/login";
+const APP_LOGIN_URL = appLogin();
 
 const GENERIC_ERROR =
   "Something went wrong on our side. Please try again, or email your job description to support@hirerevolution.ai.";
-
-function emailDomain(email: string): string | null {
-  const parts = email.split("@");
-  if (parts.length !== 2 || !parts[0] || email.includes(" ")) return null;
-  const domain = parts[1];
-  if (!domain.includes(".") || domain.startsWith(".") || domain.endsWith(".")) return null;
-  return domain;
-}
-
-function normalizeWebsite(website: string): string | null {
-  try {
-    const url = new URL(website.includes("://") ? website : `https://${website}`);
-    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
-    if (!url.hostname.includes(".")) return null;
-    return url.toString();
-  } catch {
-    return null;
-  }
-}
-
-function text(value: unknown): string {
-  return typeof value === "string" ? value.trim() : "";
-}
 
 function badRequest(error: string) {
   return NextResponse.json({ error }, { status: 400 });

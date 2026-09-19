@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { SUPPORT_EMAIL, appLogin, appSignup } from "@/lib/links";
 
 /**
  * Shown after a website JD submission. Polls until the app has built the job,
@@ -9,9 +10,8 @@ import { useEffect, useState } from "react";
  * explains what to expect next.
  */
 
-const APP_SIGNUP_URL = "https://app.hirerevolution.ai/login?mode=signup";
-const APP_LOGIN_URL = "https://app.hirerevolution.ai/login";
-const SUPPORT_EMAIL = "support@hirerevolution.ai";
+const APP_SIGNUP_URL = appSignup("employer");
+const APP_LOGIN_URL = appLogin();
 // Matches the app's hm_free_candidate_cap default; the app's value wins when it sends one.
 const DEFAULT_FREE_CANDIDATE_CAP = 15;
 const POLL_MS = 5_000;

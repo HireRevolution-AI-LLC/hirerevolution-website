@@ -86,7 +86,7 @@ export default function ContactSalesPage() {
             every open role.
           </p>
 
-          <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-8 space-y-6">
+          <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-5 sm:p-8 space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-semibold text-gray-900 mb-2">Your Name *</label>

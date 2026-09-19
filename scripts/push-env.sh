@@ -8,6 +8,9 @@
 # The file lives outside git, so it survives deploys (git reset --hard keeps
 # ignored files) but NOT a droplet rebuild: re-run this after `tofu apply`
 # replaces the droplet.
+#
+# NEXT_PUBLIC_* values are baked in when the site is built, so a change to
+# one takes effect on the next deploy (push to main), not on this restart.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -26,7 +29,7 @@ FILE="config/.env.$ENV"
 # Refuse a half-filled file: the site would only fail on the first submission.
 missing=$(
   set -a; . "./$FILE"; set +a
-  for k in APP_API_URL FIREBASE_WEB_API_KEY WEBSITE_SUBMITTER_EMAIL WEBSITE_SUBMITTER_PASSWORD TURNSTILE_SECRET TURNSTILE_HOSTNAMES; do
+  for k in APP_API_URL FIREBASE_WEB_API_KEY WEBSITE_SUBMITTER_EMAIL WEBSITE_SUBMITTER_PASSWORD TURNSTILE_SECRET TURNSTILE_HOSTNAMES NEXT_PUBLIC_APP_URL DEMO_API_URL SITE_ORIGIN; do
     [ -n "${!k:-}" ] || echo "$k"
   done
 )

@@ -1,145 +1,98 @@
-export default function PricingPage() {
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { CheckList, PageHero, Section, buttonClass } from "../components/ui";
+import { SWITCH_TO } from "@/lib/audience";
+
+export const metadata: Metadata = {
+  title: "Pricing for Hiring Teams | HireRevolution AI",
+  description: "Plans for hiring managers, recruiting firms and enterprise talent teams, sized to your team and open roles.",
+};
+
+export default function HiringPricingPage() {
   return (
     <main className="flex-1">
-      <section className="py-24 px-4 bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            Simple, Transparent Pricing
-          </h1>
-          <p className="text-xl text-gray-600">
-            For job seekers, it's always free. For hiring teams, it's affordable at any scale.
-          </p>
-        </div>
-      </section>
+      <PageHero
+        title="Pricing that fits your team"
+        subtitle="From a single hiring manager to a recruiting firm or an enterprise talent team."
+      />
 
-      <section className="py-24 px-4 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-12">
-            {/* Candidates */}
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">
-                For Job Seekers
-              </h2>
-              <div className="bg-green-50 border border-green-200 rounded-lg p-8 text-center">
-                <p className="text-6xl font-bold text-green-600 mb-3">$0</p>
-                <p className="text-xl text-gray-600 mb-8">Always free</p>
-                <ul className="space-y-4 text-left mb-8">
-                  <li className="flex items-center">
-                    <span className="text-green-600 font-bold mr-3">✓</span>
-                    <span>Complete your AI-powered profile</span>
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-green-600 font-bold mr-3">✓</span>
-                    <span>AI-tailored application materials</span>
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-green-600 font-bold mr-3">✓</span>
-                    <span>Auto-search for matching jobs</span>
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-green-600 font-bold mr-3">✓</span>
-                    <span>Recruiter-searchable profile</span>
-                  </li>
-                  <li className="flex items-center">
-                    <span className="text-green-600 font-bold mr-3">✓</span>
-                    <span>Export & share your profile</span>
-                  </li>
-                </ul>
-                <a
-                  href="https://app.hirerevolution.ai/dashboard/candidate"
-                  className="inline-block bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition"
-                >
-                  Get Started
-                </a>
-              </div>
-            </div>
-
-            {/* Hiring Managers */}
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">
-                For Hiring Managers & Teams
-              </h2>
-              <div className="bg-blue-50 border-2 border-blue-600 rounded-lg p-8">
-                <p className="text-gray-600 mb-6">
-                  Pricing varies based on your team size, number of open roles, and usage. We work with companies of all sizes—from individual hiring managers to large recruiting firms.
-                </p>
-                <div className="space-y-4 mb-8">
-                  <div className="bg-white rounded p-4 border border-blue-200">
-                    <p className="font-semibold text-gray-900 mb-1">
-                      Candidate Auto-Search
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Automatically surface matching candidates after you publish a job
-                    </p>
-                  </div>
-                  <div className="bg-white rounded p-4 border border-blue-200">
-                    <p className="font-semibold text-gray-900 mb-1">
-                      ATS Integration
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Connect with Greenhouse, Lever, Bullhorn, or 40+ other platforms
-                    </p>
-                  </div>
-                  <div className="bg-white rounded p-4 border border-blue-200">
-                    <p className="font-semibold text-gray-900 mb-1">
-                      Batch Processing (Coming Soon)
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Upload multiple resumes or job descriptions at once
-                    </p>
-                  </div>
-                  <div className="bg-white rounded p-4 border border-blue-200">
-                    <p className="font-semibold text-gray-900 mb-1">
-                      Priority Support
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      Dedicated support for your team
-                    </p>
-                  </div>
-                </div>
-                <a
-                  href="/demo"
-                  className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
-                >
-                  Book a Demo
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-16 bg-gray-50 rounded-lg p-8 text-center">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">
-              Special Limited-Time Offer
-            </h3>
-            <p className="text-lg text-gray-600 mb-6 max-w-2xl mx-auto">
-              Submit your job description and we'll create it in HireRevolution and search for candidates—free. Perfect way to see the platform in action.
+      <Section>
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="bg-blue-50 border-2 border-blue-600 rounded-2xl p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Hiring managers & recruiting firms</h2>
+            <p className="text-gray-600 mb-6">
+              Pricing depends on your team size, number of open roles and integrations. Every plan includes:
             </p>
-            <a
-              href="/offers/submit-jd"
-              className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
-            >
-              Try It Free
-            </a>
+            <div className="mb-8">
+              <CheckList
+                items={[
+                  "Skills-based candidate ranking, with no resume reading",
+                  "Automatic candidate search for every job",
+                  "AI job description builder",
+                  "Skill match charts and Standout Signals",
+                  "AI candidate intros and in-app interview scheduling",
+                ]}
+              />
+            </div>
+            <Link href="/demo" className={buttonClass.primary}>
+              Book a demo
+            </Link>
+          </div>
+
+          <div className="bg-white border border-gray-200 rounded-2xl p-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Enterprise</h2>
+            <p className="text-gray-600 mb-6">For larger teams hiring at scale. Everything above, plus:</p>
+            <div className="mb-8">
+              <CheckList
+                items={[
+                  "ATS and HRIS integrations: JobDiva, Bullhorn, Lever, Recruit CRM and 40+ more",
+                  "Every open role, across teams",
+                  "Priority support",
+                ]}
+              />
+            </div>
+            <Link href="/contact-sales" className={buttonClass.outline}>
+              Talk to sales
+            </Link>
           </div>
         </div>
-      </section>
+      </Section>
 
-      <section className="py-12 px-4 bg-white border-t border-gray-200">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Questions About Pricing?
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Every team is different. Let's talk about what works for you.
-          </p>
-          <a
-            href="/contact"
-            className="inline-block text-blue-600 font-semibold hover:text-blue-700"
-          >
-            Get in Touch →
-          </a>
+      <Section tone="gray">
+        <div className="grid md:grid-cols-[1fr_320px] gap-10 items-center">
+          <div>
+            <p className="text-blue-700 font-semibold text-sm uppercase tracking-wider mb-3">Limited-time offer</p>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Try it free with one of your jobs</h2>
+            <p className="text-lg text-gray-600 mb-6">
+              Submit your job description and we&apos;ll create it in HireRevolution and search for candidates, free.
+              The easiest way to see it work.
+            </p>
+            <Link href="/offers/submit-jd" className={buttonClass.primary}>
+              Submit your JD
+            </Link>
+          </div>
+          <div className="relative aspect-square rounded-2xl overflow-hidden shadow-lg">
+            <Image src="/images/robot-reading.webp" alt="Robot reading a job description" fill sizes="320px" className="object-cover" />
+          </div>
         </div>
-      </section>
+      </Section>
+
+      <Section>
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-3">Questions about pricing?</h2>
+          <p className="text-gray-600 mb-6">Every team is different. Let&apos;s talk about what works for you.</p>
+          <Link href="/contact-sales" className="text-blue-700 font-semibold hover:text-blue-800">
+            Talk to sales →
+          </Link>
+          <p className="text-gray-600 mt-10">
+            Looking for a job?{" "}
+            <Link href={SWITCH_TO.candidates} prefetch={false} className="text-blue-700 font-semibold hover:text-blue-800">
+              It&apos;s free for job seekers →
+            </Link>
+          </p>
+        </div>
+      </Section>
     </main>
   );
 }
