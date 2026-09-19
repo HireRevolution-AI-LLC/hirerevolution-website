@@ -9,7 +9,7 @@ import { appSignup } from "@/lib/links";
 export const metadata: Metadata = {
   title: "HireRevolution AI for Job Seekers | Get Matched on Your Skills",
   description:
-    "Our AI interviews you to capture the skills you'd never think to list, then matches you to jobs on what you can actually do. Free for job seekers.",
+    "Our AI interviews you to capture the skills you'd never think to list, then matches you to jobs on what you can actually do. Your profile, resumes and cover letters are free.",
 };
 
 export default function CandidateHome() {
@@ -51,7 +51,7 @@ export default function CandidateHome() {
             {[
               ["Tell our AI about yourself", "A short, guided interview captures your skills and experience, including the ones you'd never list."],
               ["Get your profile", "A complete 360-degree profile that represents what you can actually do."],
-              ["Get matched", "We find jobs that fit your skills and tailor your application materials for each one."],
+              ["Apply with confidence", "Search for jobs that fit your skills and generate a tailored resume and cover letter for each one."],
             ].map(([title, text], i) => (
               <li key={title} className="flex items-start gap-4 bg-white rounded-xl p-6 border border-gray-200">
                 <span className="shrink-0 w-10 h-10 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center">
@@ -65,7 +65,7 @@ export default function CandidateHome() {
             ))}
           </ol>
           <div className="mt-8">
-            <CheckList items={["No credit card required", "Core features free for job seekers", "Auto-search free for a limited time"]} />
+            <CheckList items={["No credit card required", "Your profile, resumes and cover letters are free", "Auto-search is an optional paid upgrade"]} />
           </div>
         </div>
       </Section>

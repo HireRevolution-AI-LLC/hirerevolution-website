@@ -5,7 +5,7 @@ import { appSignup } from "@/lib/links";
 
 export const metadata: Metadata = {
   title: "Features for Job Seekers | HireRevolution AI",
-  description: "An AI-built skills profile, automatic job matching, tailored applications and a recruiter-searchable profile. Free for job seekers.",
+  description: "A free AI-built skills profile, tailored resumes and cover letters, job search and a recruiter-searchable profile, plus optional auto-search.",
 };
 
 export default function CandidateFeaturesPage() {
@@ -13,7 +13,7 @@ export default function CandidateFeaturesPage() {
     <main className="flex-1">
       <PageHero
         title="Everything you need to get hired on your skills"
-        subtitle="Stop optimizing resumes for algorithms. Apply based on what you can actually do. Free for job seekers, with auto-search free for a limited time."
+        subtitle="Stop optimizing resumes for algorithms. Your profile, resumes and cover letters are free; auto-search is an optional upgrade."
       />
       <Section>
         <FeatureGrid features={CANDIDATE_FEATURES} />

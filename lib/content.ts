@@ -65,17 +65,16 @@ export const CANDIDATE_FEATURES: Feature[] = [
     image: { src: "/images/robots-tall-short.webp", alt: "Two friendly robots" },
   },
   {
-    title: "Jobs come to you",
+    title: "Resumes and cover letters, tailored",
     description:
-      "Publish your profile and auto-search finds matching jobs for you. Job hunting becomes passive and skills-based.",
-    badge: "Free for a limited time",
-    image: { src: "/images/robot-cell-phone-standing.webp", alt: "Robot checking job matches on a phone" },
+      "Generate a resume and cover letter customized for each role from your full profile. No more rewriting your resume for every job.",
+    image: { src: "/images/robots-coffee.webp", alt: "Robots working on an application together" },
   },
   {
-    title: "Applications tailored for you",
+    title: "Search jobs your way",
     description:
-      "Every application is customized for the role from your full profile. No more rewriting your resume for every job.",
-    image: { src: "/images/robots-coffee.webp", alt: "Robots working on an application together" },
+      "Use HireRevolution to search for jobs yourself, free. Or let auto-search, an optional paid upgrade, find matching jobs for you.",
+    image: { src: "/images/robot-cell-phone-standing.webp", alt: "Robot checking job matches on a phone" },
   },
   {
     title: "Found by recruiters, always",

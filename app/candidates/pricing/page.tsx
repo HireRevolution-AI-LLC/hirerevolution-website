@@ -5,32 +5,33 @@ import { appSignup } from "@/lib/links";
 
 export const metadata: Metadata = {
   title: "Pricing for Job Seekers | HireRevolution AI",
-  description: "HireRevolution AI is free for job seekers. Auto-search is a paid upgrade, free for a limited time.",
+  description: "Your HireRevolution AI profile, resumes and cover letters are free. Auto-search is an optional paid upgrade.",
 };
 
 export default function CandidatePricingPage() {
   return (
     <main className="flex-1">
-      <PageHero title="Free for job seekers" subtitle="Build your profile, tailor your applications and get found, free. No credit card." />
+      <PageHero title="Free for job seekers" subtitle="Your online profile, resumes and cover letters are free. Some extras, like auto-search, are optional paid upgrades." />
       <Section>
         <div className="max-w-md mx-auto bg-green-50 border border-green-200 rounded-2xl p-8 text-center">
           <p className="text-6xl font-bold text-green-600 mb-2">$0</p>
-          <p className="text-xl text-gray-600 mb-8">Core features, always free</p>
+          <p className="text-xl text-gray-600 mb-8">Free, no credit card</p>
           <div className="text-left mb-8">
             <CheckList
               items={[
-                "Your AI-built skills profile",
-                "AI-tailored application materials",
+                "Your AI-built online profile",
+                "Resumes and cover letters tailored to each job",
+                "Help searching for jobs yourself",
                 "A recruiter-searchable profile",
                 "Export and share your profile",
               ]}
             />
           </div>
           <div className="text-left rounded-xl bg-white border border-green-200 p-4 mb-8">
-            <p className="font-semibold text-gray-900">Auto-search: free for a limited time</p>
+            <p className="font-semibold text-gray-900">Optional upgrade: auto-search</p>
             <p className="text-sm text-gray-600">
-              Auto-search finds matching jobs for you automatically. It will become an optional paid upgrade; for now
-              it&apos;s free.
+              Auto-search finds matching jobs for you automatically, so you don&apos;t have to look. It&apos;s a paid
+              option; everything above stays free.
             </p>
           </div>
           <a href={appSignup("individual")} className={buttonClass.primary}>

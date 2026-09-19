@@ -22,8 +22,9 @@ export default function FulfillmentPolicyPage() {
           reason, we do not offer refunds. If something isn&apos;t working for you, email <Support /> and we&apos;ll help.
         </p>
         <p>
-          <strong>Job seekers:</strong> most of HireRevolution AI is free. Automatic job search (auto-search) is a paid
-          upgrade, and it is free for a limited time.
+          <strong>Job seekers:</strong> creating your online profile, generating resumes and cover letters, and
+          searching for jobs yourself are free. Some optional services have a fee; for example, automatic job search
+          (auto-search) is a paid upgrade.
         </p>
       </LegalSection>
 
