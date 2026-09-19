@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import AutoSearchPromo from "../components/AutoSearchPromo";
 import FounderSection from "../components/FounderSection";
 import { CheckList, CtaBand, FeatureGrid, ImageHero, Section, buttonClass } from "../components/ui";
 import { SWITCH_TO } from "@/lib/audience";
@@ -9,7 +10,7 @@ import { appSignup } from "@/lib/links";
 export const metadata: Metadata = {
   title: "HireRevolution AI for Job Seekers | Get Matched on Your Skills",
   description:
-    "Our AI interviews you to capture the skills you'd never think to list, then matches you to jobs on what you can actually do. Your profile, resumes and cover letters are free.",
+    "Our AI interviews you to capture the skills you'd never think to list, then matches you to jobs on what you can actually do. Your profile, resumes and cover letters are free, and auto-search is free for a limited time.",
 };
 
 export default function CandidateHome() {
@@ -36,6 +37,8 @@ export default function CandidateHome() {
           </Link>
         </p>
       </ImageHero>
+
+      <AutoSearchPromo />
 
       <Section
         title="Stop writing resumes for robots"
@@ -65,7 +68,7 @@ export default function CandidateHome() {
             ))}
           </ol>
           <div className="mt-8">
-            <CheckList items={["No credit card required", "Your profile, resumes and cover letters are free", "Auto-search is an optional paid upgrade"]} />
+            <CheckList items={["No credit card required", "Your profile, resumes and cover letters are free", "Auto-search is free for a limited time"]} />
           </div>
         </div>
       </Section>

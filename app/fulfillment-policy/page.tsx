@@ -24,7 +24,7 @@ export default function FulfillmentPolicyPage() {
         <p>
           <strong>Job seekers:</strong> creating your online profile, generating resumes and cover letters, and
           searching for jobs yourself are free. Some optional services have a fee; for example, automatic job search
-          (auto-search) is a paid upgrade.
+          (auto-search) is a paid upgrade, currently offered free for a limited time.
         </p>
       </LegalSection>
 

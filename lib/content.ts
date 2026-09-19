@@ -73,8 +73,8 @@ export const CANDIDATE_FEATURES: Feature[] = [
   {
     title: "Search jobs your way",
     description:
-      "Use HireRevolution to search for jobs yourself, free. Or let auto-search, an optional paid upgrade, find matching jobs for you.",
-    image: { src: "/images/robot-cell-phone-standing.webp", alt: "Robot checking job matches on a phone" },
+      "Search for jobs yourself, free. Or turn on auto-search and let our AI find matching jobs for you. Auto-search is free for a limited time.",
+    image: { src: "/images/robot-reading.webp", alt: "Robot reading through job listings" },
   },
   {
     title: "Found by recruiters, always",
@@ -83,6 +83,14 @@ export const CANDIDATE_FEATURES: Feature[] = [
     image: { src: "/images/robots-woman-coworker-coffee.webp", alt: "Robots at a desk with the HireRevolution dashboard" },
   },
 ];
+
+/** Auto-search will be a paid upgrade; for now it's free. Remove the promo when that ends. */
+export const AUTO_SEARCH_PROMO = {
+  badge: "Free for a limited time",
+  title: "Let auto-search find jobs for you",
+  body: "Most job sites make you do the searching. Auto-search doesn't. It keeps looking for jobs that match your skills and brings them straight to you.",
+  urgency: "Auto-search will be a paid upgrade. Right now it's free, so use it while you can!",
+};
 
 export const CANDIDATE_MORE_FEATURES: Feature[] = [
   {
