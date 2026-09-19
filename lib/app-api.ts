@@ -74,27 +74,15 @@ async function getIdToken(forceRefresh = false): Promise<string> {
   return data.idToken;
 }
 
-/**
- * Create the JD the way /add-jd does, with background: true so the app
- * returns 202 as soon as the company and hiring manager are resolved and runs
- * the AI pipeline (and the intro email) on its own.
- */
-export async function createThirdPartyJD(jd: ThirdPartyJD): Promise<Response> {
+/** Call the app API as the website's service user; signs in again once on a 401. */
+async function appFetch(path: string, init: { method: "GET" | "POST"; body?: unknown }): Promise<Response> {
   const { apiUrl } = config();
-  const body = JSON.stringify({
-    company_name: jd.companyName,
-    company_website: jd.companyWebsite,
-    jd_text: jd.jdText,
-    hiring_manager_email: jd.hiringManagerEmail,
-    hiring_manager_name: jd.hiringManagerName,
-    background: true,
-  });
-
+  const body = init.body === undefined ? undefined : JSON.stringify(init.body);
   const send = async (token: string) =>
-    fetch(`${apiUrl}/api/jobs/create-3rd-party`, {
-      method: "POST",
+    fetch(`${apiUrl}${path}`, {
+      method: init.method,
       headers: {
-        "Content-Type": "application/json",
+        ...(body ? { "Content-Type": "application/json" } : {}),
         Accept: "application/json",
         Authorization: `Bearer ${token}`,
       },
@@ -108,4 +96,54 @@ export async function createThirdPartyJD(jd: ThirdPartyJD): Promise<Response> {
     return send(await getIdToken(true));
   }
   return res;
+}
+
+/**
+ * Create the JD the way /add-jd does, with background: true so the app
+ * returns 202 as soon as the company and hiring manager are resolved and runs
+ * the AI pipeline (and the intro email) on its own. source: "website" makes
+ * the app enforce the offer's per-email and per-company limits.
+ */
+export async function createThirdPartyJD(jd: ThirdPartyJD): Promise<Response> {
+  return appFetch("/api/jobs/create-3rd-party", {
+    method: "POST",
+    body: {
+      company_name: jd.companyName,
+      company_website: jd.companyWebsite,
+      jd_text: jd.jdText,
+      hiring_manager_email: jd.hiringManagerEmail,
+      hiring_manager_name: jd.hiringManagerName,
+      background: true,
+      source: "website",
+    },
+  });
+}
+
+/** Status of a background JD import this service user submitted. */
+export async function getJobImport(importId: string): Promise<Response> {
+  return appFetch(`/api/job-imports/${encodeURIComponent(importId)}`, { method: "GET" });
+}
+
+export type ContactSales = {
+  name: string;
+  email: string;
+  company: string;
+  companyWebsite?: string;
+  teamSize?: string;
+  message?: string;
+};
+
+/** Hand an enterprise inquiry to the app, which emails the team. */
+export async function sendContactSales(c: ContactSales): Promise<Response> {
+  return appFetch("/api/website/contact-sales", {
+    method: "POST",
+    body: {
+      name: c.name,
+      email: c.email,
+      company: c.company,
+      company_website: c.companyWebsite || undefined,
+      team_size: c.teamSize || undefined,
+      message: c.message || undefined,
+    },
+  });
 }

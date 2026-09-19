@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import Turnstile, { type TurnstileHandle } from "../../components/Turnstile";
+import NextSteps from "./NextSteps";
 
 const EMPTY_FORM = {
   companyName: "",
@@ -14,9 +15,16 @@ const EMPTY_FORM = {
 
 export default function SubmitJDPage() {
   const [formData, setFormData] = useState(EMPTY_FORM);
-  const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState<{
+    email: string;
+    importId: string | null;
+    freeCandidateCap: number | null;
+  } | null>(null);
+  const [loginUrl, setLoginUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstile = useRef<TurnstileHandle>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -32,6 +40,7 @@ export default function SubmitJDPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setLoginUrl(null);
 
     try {
       const response = await fetch("/api/submit-jd", {
@@ -39,14 +48,20 @@ export default function SubmitJDPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, "cf-turnstile-response": turnstileToken }),
       });
 
       if (response.ok) {
-        setSubmittedEmail(formData.hiringManagerEmail.trim());
+        const body = await response.json().catch(() => ({}));
+        setSubmitted({
+          email: formData.hiringManagerEmail.trim(),
+          importId: body.importId ?? null,
+          freeCandidateCap: body.freeCandidateCap ?? null,
+        });
         setFormData(EMPTY_FORM);
       } else {
         const body = await response.json().catch(() => ({}));
+        setLoginUrl(typeof body.loginUrl === "string" ? body.loginUrl : null);
         setError(
           body.error ??
             "Something went wrong. Please try again, or email your job description to support@hirerevolution.ai."
@@ -56,62 +71,18 @@ export default function SubmitJDPage() {
       setError("We couldn't reach our server. Check your connection and try again.");
     } finally {
       setLoading(false);
+      // Tokens are single-use: get a fresh one before any retry.
+      turnstile.current?.reset();
     }
   };
 
-  if (submittedEmail) {
+  if (submitted) {
     return (
-      <main className="flex-1">
-        <section className="py-24 px-4 bg-gradient-to-br from-green-50 to-emerald-50">
-          <div className="max-w-2xl mx-auto text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
-              <svg
-                className="w-8 h-8 text-green-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            </div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              You&apos;re all set!
-            </h1>
-            <p className="text-xl text-gray-600 mb-8">
-              Our AI is building your job description now. In a few minutes you&apos;ll get an email at{" "}
-              <strong className="text-gray-900">{submittedEmail}</strong> with your free account and your first matched candidates.
-            </p>
-            <div className="bg-white rounded-lg p-8 mb-8 border border-gray-200">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">What happens next:</h2>
-              <ul className="text-left space-y-3 text-gray-600">
-                <li className="flex items-start">
-                  <span className="text-green-600 font-bold mr-3">1.</span>
-                  <span>Your job description is created in HireRevolution AI</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 font-bold mr-3">2.</span>
-                  <span>We automatically search for candidates who have the skills it needs</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="text-green-600 font-bold mr-3">3.</span>
-                  <span>You get an email with a link to your matched candidates. No resumes to read.</span>
-                </li>
-              </ul>
-            </div>
-            <Link
-              href="/"
-              className="inline-block bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
-            >
-              Back to Home
-            </Link>
-          </div>
-        </section>
-      </main>
+      <NextSteps
+        email={submitted.email}
+        importId={submitted.importId}
+        freeCandidateCap={submitted.freeCandidateCap}
+      />
     );
   }
 
@@ -265,15 +236,25 @@ export default function SubmitJDPage() {
                 </p>
               </div>
 
+              <Turnstile ref={turnstile} action="submit_jd" onToken={setTurnstileToken} />
+
               {error && (
                 <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                   {error}
+                  {loginUrl && (
+                    <>
+                      {" "}
+                      <a href={loginUrl} className="font-semibold underline">
+                        Log in to HireRevolution
+                      </a>
+                    </>
+                  )}
                 </div>
               )}
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !turnstileToken}
                 className="w-full bg-blue-600 text-white px-6 py-4 rounded-lg font-semibold text-lg hover:bg-blue-700 transition disabled:bg-gray-400"
               >
                 {loading ? "Sending..." : "Find My Candidates"}

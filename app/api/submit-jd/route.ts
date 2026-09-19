@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AppApiNotConfiguredError, createThirdPartyJD } from "@/lib/app-api";
+import { clientIp, rateLimited } from "@/lib/rate-limit";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 /**
  * Limited-time offer: a hiring manager submits a JD and we create it in
@@ -12,8 +14,9 @@ import { AppApiNotConfiguredError, createThirdPartyJD } from "@/lib/app-api";
 
 const MIN_JD_LENGTH = 50; // matches the app's jd_text min_length
 const MAX_JD_LENGTH = 100_000;
-const RATE_LIMIT = 5;
-const RATE_WINDOW_MS = 60 * 60_000;
+// Per IP. The app also limits each work email and company to 2 website JDs.
+const RATE_LIMIT = 3;
+const RATE_WINDOW_MS = 24 * 60 * 60_000;
 
 // The offer is for a work address; these can't tie a submitter to a company.
 const FREE_EMAIL_DOMAINS = new Set([
@@ -23,29 +26,10 @@ const FREE_EMAIL_DOMAINS = new Set([
   "yandex.com", "zoho.com",
 ]);
 
+const APP_LOGIN_URL = "https://app.hirerevolution.ai/login";
+
 const GENERIC_ERROR =
   "Something went wrong on our side. Please try again, or email your job description to support@hirerevolution.ai.";
-
-// One process serves the site (PM2 fork mode), so an in-memory window is enough.
-const recentByIp = new Map<string, number[]>();
-
-function rateLimited(ip: string): boolean {
-  const now = Date.now();
-  const recent = (recentByIp.get(ip) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
-  if (recent.length >= RATE_LIMIT) {
-    recentByIp.set(ip, recent);
-    return true;
-  }
-  recent.push(now);
-  recentByIp.set(ip, recent);
-  return false;
-}
-
-function clientIp(request: NextRequest): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0].trim();
-  return request.headers.get("x-real-ip") ?? "unknown";
-}
 
 function emailDomain(email: string): string | null {
   const parts = email.split("@");
@@ -72,6 +56,12 @@ function text(value: unknown): string {
 
 function badRequest(error: string) {
   return NextResponse.json({ error }, { status: 400 });
+}
+
+type OfferLimit = { code: "website_offer_limit"; message?: string; login_url?: string };
+
+function isOfferLimit(detail: unknown): detail is OfferLimit {
+  return typeof detail === "object" && detail !== null && (detail as OfferLimit).code === "website_offer_limit";
 }
 
 /** Turn the app's error body into something a visitor can act on. */
@@ -102,6 +92,15 @@ export async function POST(request: NextRequest) {
     body = await request.json();
   } catch {
     return badRequest("Invalid request.");
+  }
+
+  // Human check first: nothing else runs for a request without a valid token.
+  const ip = clientIp(request);
+  if (!(await verifyTurnstile(body["cf-turnstile-response"], "submit_jd", ip))) {
+    return NextResponse.json(
+      { error: "We couldn't confirm you're human. Please complete the check and try again." },
+      { status: 403 },
+    );
   }
 
   // Honeypot: hidden from people, filled in by bots. Pretend it worked.
@@ -139,9 +138,12 @@ export async function POST(request: NextRequest) {
     return badRequest("That job description is too long. Please trim it and try again.");
   }
 
-  if (rateLimited(clientIp(request))) {
+  if (rateLimited(`submit-jd:${ip}`, RATE_LIMIT, RATE_WINDOW_MS)) {
     return NextResponse.json(
-      { error: "You've sent several job descriptions already. Please try again in an hour." },
+      {
+        error: "You've already sent several job descriptions today. Log in to HireRevolution to add more jobs.",
+        loginUrl: APP_LOGIN_URL,
+      },
       { status: 429 },
     );
   }
@@ -165,11 +167,27 @@ export async function POST(request: NextRequest) {
   }
 
   if (res.status === 202 || res.ok) {
-    console.log(`[submit-jd] queued JD for ${companyName} (${website})`);
-    return NextResponse.json({ ok: true });
+    const queued = await res.json().catch(() => ({}));
+    console.log(`[submit-jd] queued JD for ${companyName} (${website}) as import ${queued.import_id}`);
+    return NextResponse.json({
+      ok: true,
+      importId: typeof queued.import_id === "string" ? queued.import_id : null,
+      freeCandidateCap: typeof queued.free_candidate_cap === "number" ? queued.free_candidate_cap : null,
+    });
   }
 
   const errBody = await res.json().catch(() => ({}));
+  if (res.status === 429 && isOfferLimit(errBody.detail)) {
+    return NextResponse.json(
+      {
+        error:
+          errBody.detail.message ??
+          "You've already used the free website offer for this email or company. Log in to HireRevolution to add more jobs.",
+        loginUrl: errBody.detail.login_url ?? APP_LOGIN_URL,
+      },
+      { status: 429 },
+    );
+  }
   console.error(`[submit-jd] app API returned ${res.status}:`, JSON.stringify(errBody).slice(0, 500));
   const status = res.status === 409 || res.status === 422 || res.status === 429 ? res.status : 502;
   return NextResponse.json({ error: upstreamMessage(res.status, errBody.detail) }, { status });

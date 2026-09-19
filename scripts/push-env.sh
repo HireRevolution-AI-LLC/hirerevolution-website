@@ -26,7 +26,7 @@ FILE="config/.env.$ENV"
 # Refuse a half-filled file: the site would only fail on the first submission.
 missing=$(
   set -a; . "./$FILE"; set +a
-  for k in APP_API_URL FIREBASE_WEB_API_KEY WEBSITE_SUBMITTER_EMAIL WEBSITE_SUBMITTER_PASSWORD; do
+  for k in APP_API_URL FIREBASE_WEB_API_KEY WEBSITE_SUBMITTER_EMAIL WEBSITE_SUBMITTER_PASSWORD TURNSTILE_SECRET TURNSTILE_HOSTNAMES; do
     [ -n "${!k:-}" ] || echo "$k"
   done
 )
