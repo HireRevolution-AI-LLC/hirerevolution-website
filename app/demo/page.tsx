@@ -114,7 +114,7 @@ export default function DemoPage() {
             Or Try It Now (Free)
           </h2>
           <p className="text-gray-600 mb-6">
-            Don&apos;t want to wait for a demo? Paste a job description and we&apos;ll email you matching candidates within minutes.
+            Don&apos;t want to wait for a demo? Paste a job description and within minutes we&apos;ll email you a link to your matching candidates.
           </p>
           <a
             href="/offers/submit-jd"

@@ -95,7 +95,7 @@ export default function SubmitJDPage() {
               Submit Your Job Description
             </h1>
             <p className="text-xl text-gray-600">
-              Paste your JD and we&apos;ll create it in HireRevolution, search for matching candidates, and email you the results within minutes. Free, for a limited time.
+              Paste your JD and we&apos;ll create it in HireRevolution, search for matching candidates, and email you a link to them within minutes. Free, for a limited time.
             </p>
           </div>
 

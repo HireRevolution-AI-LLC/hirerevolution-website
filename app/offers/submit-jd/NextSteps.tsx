@@ -142,9 +142,9 @@ export default function NextSteps({ email, importId, freeCandidateCap }: Props) 
               <li className="flex items-start">
                 <span className="text-green-600 font-bold mr-3">2.</span>
                 <span>
-                  <strong className="text-gray-900">Candidates by email.</strong> As we find people with the skills
-                  your job needs, we email them to you. Your first {cap} candidates are free. After that, subscribe to
-                  keep seeing new matches.
+                  <strong className="text-gray-900">New candidates every week.</strong> As we find people with the
+                  skills your job needs, we email them to you weekly. The first {cap} candidates we email you are
+                  free. After that, subscribe to keep getting new matches by email.
                 </span>
               </li>
               <li className="flex items-start">
