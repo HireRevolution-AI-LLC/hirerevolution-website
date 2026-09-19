@@ -44,6 +44,8 @@ const Turnstile = forwardRef<TurnstileHandle, Props>(function Turnstile({ action
     widgetId.current = window.turnstile.render(container.current, {
       sitekey: TURNSTILE_SITE_KEY,
       action,
+      // The site is light-only; don't follow the visitor's dark mode.
+      theme: "light",
       callback: (token: string) => onTokenRef.current(token),
       "expired-callback": () => onTokenRef.current(""),
       "error-callback": () => onTokenRef.current(""),
