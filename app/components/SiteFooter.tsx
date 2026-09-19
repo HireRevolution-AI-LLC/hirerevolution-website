@@ -20,7 +20,7 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
     links: [
       { label: "How it works", href: CANDIDATES_PREFIX },
       { label: "Features", href: `${CANDIDATES_PREFIX}/features` },
-      { label: "Pricing (free)", href: `${CANDIDATES_PREFIX}/pricing` },
+      { label: "Pricing", href: `${CANDIDATES_PREFIX}/pricing` },
     ],
   },
   {
@@ -31,6 +31,14 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
       { label: "Log in", href: appLogin() },
     ],
   },
+];
+
+// Privacy and Terms redirect to the app's pages (next.config.ts).
+const LEGAL_LINKS = [
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Terms of Service", href: "/terms-of-service" },
+  { label: "Fulfillment Policy", href: "/fulfillment-policy" },
+  { label: "Accessibility", href: "/digital-accessibility" },
 ];
 
 export default function SiteFooter() {
@@ -72,8 +80,17 @@ export default function SiteFooter() {
             </div>
           ))}
         </div>
-        <div className="border-t border-gray-200 pt-8 text-center text-gray-600 text-sm">
-          © {new Date().getFullYear()} HireRevolution AI. All rights reserved.
+        <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row gap-4 justify-between items-center text-gray-600 text-sm">
+          <span>© {new Date().getFullYear()} HireRevolution AI. All rights reserved.</span>
+          <ul className="flex flex-wrap gap-x-5 gap-y-1 justify-center">
+            {LEGAL_LINKS.map((l) => (
+              <li key={l.href}>
+                <a href={l.href} className="hover:text-gray-900">
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </footer>

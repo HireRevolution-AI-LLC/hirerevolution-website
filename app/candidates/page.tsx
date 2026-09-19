@@ -7,16 +7,16 @@ import { CANDIDATE_FEATURES } from "@/lib/content";
 import { appSignup } from "@/lib/links";
 
 export const metadata: Metadata = {
-  title: "HireRevolution AI for Job Seekers | Get Matched on Your Skills, Free",
+  title: "HireRevolution AI for Job Seekers | Get Matched on Your Skills",
   description:
-    "Our AI interviews you to capture the skills you'd never think to list, then matches you to jobs on what you can actually do. Free for job seekers, always.",
+    "Our AI interviews you to capture the skills you'd never think to list, then matches you to jobs on what you can actually do. Free for job seekers.",
 };
 
 export default function CandidateHome() {
   return (
     <main className="flex-1">
       <ImageHero
-        eyebrow="For job seekers · Free, always"
+        eyebrow="For job seekers · Free to use"
         title="Land interviews without rewriting your resume."
         subtitle="Our AI interviews you to capture the skills you'd never think to list, then matches you to jobs on what you can actually do."
         image={{ src: "/images/robot-candidate2-dog-wide.webp", alt: "The HireRevolution robot reviewing a resume at a desk, with a robot dog" }}
@@ -65,7 +65,7 @@ export default function CandidateHome() {
             ))}
           </ol>
           <div className="mt-8">
-            <CheckList items={["No credit card required", "Free for job seekers, always", "Recruiters find you by your skills"]} />
+            <CheckList items={["No credit card required", "Core features free for job seekers", "Auto-search free for a limited time"]} />
           </div>
         </div>
       </Section>

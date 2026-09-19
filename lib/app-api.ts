@@ -147,3 +147,12 @@ export async function sendContactSales(c: ContactSales): Promise<Response> {
     },
   });
 }
+
+/**
+ * The subscription plans the app's own pricing page shows, straight from
+ * Stripe (GET /api/plans). Any signed-in user may read them.
+ */
+export async function getPlans(persona: string, interval: "month" | "year"): Promise<Response> {
+  const query = new URLSearchParams({ persona, interval });
+  return appFetch(`/api/plans?${query}`, { method: "GET" });
+}

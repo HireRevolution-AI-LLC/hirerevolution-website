@@ -67,7 +67,8 @@ export const CANDIDATE_FEATURES: Feature[] = [
   {
     title: "Jobs come to you",
     description:
-      "Publish your profile and we search for matching jobs automatically. Job hunting becomes passive and skills-based.",
+      "Publish your profile and auto-search finds matching jobs for you. Job hunting becomes passive and skills-based.",
+    badge: "Free for a limited time",
     image: { src: "/images/robot-cell-phone-standing.webp", alt: "Robot checking job matches on a phone" },
   },
   {

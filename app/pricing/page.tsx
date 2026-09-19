@@ -3,60 +3,83 @@ import Image from "next/image";
 import Link from "next/link";
 import { CheckList, PageHero, Section, buttonClass } from "../components/ui";
 import { SWITCH_TO } from "@/lib/audience";
+import { getHiringPlans } from "@/lib/pricing";
+import PlanCards from "./PlanCards";
 
 export const metadata: Metadata = {
   title: "Pricing for Hiring Teams | HireRevolution AI",
   description: "Plans for hiring managers, recruiting firms and enterprise talent teams, sized to your team and open roles.",
 };
 
-export default function HiringPricingPage() {
+// Prices come from Stripe through the app; refresh them at most hourly.
+export const revalidate = 3600;
+
+/** Shown if the app can't be reached when the page is built or refreshed. */
+function HiringPlansFallback() {
+  return (
+    <div className="grid md:grid-cols-2 gap-8">
+      <div className="bg-blue-50 border-2 border-blue-600 rounded-2xl p-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Hiring managers & recruiting firms</h2>
+        <p className="text-gray-600 mb-6">
+          Pricing depends on your team size, number of open roles and integrations. Every plan includes:
+        </p>
+        <div className="mb-8">
+          <CheckList
+            items={[
+              "Skills-based candidate ranking, with no resume reading",
+              "Automatic candidate search for every job",
+              "AI job description builder",
+              "Skill match charts and Standout Signals",
+              "AI candidate intros and in-app interview scheduling",
+            ]}
+          />
+        </div>
+        <Link href="/demo" className={buttonClass.primary}>
+          Book a demo
+        </Link>
+      </div>
+
+      <div className="bg-white border border-gray-200 rounded-2xl p-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Enterprise</h2>
+        <p className="text-gray-600 mb-6">For larger teams hiring at scale. Everything above, plus:</p>
+        <div className="mb-8">
+          <CheckList
+            items={[
+              "ATS and HRIS integrations: JobDiva, Bullhorn, Lever, Recruit CRM and 40+ more",
+              "Every open role, across teams",
+              "Priority support",
+            ]}
+          />
+        </div>
+        <Link href="/contact-sales" className={buttonClass.outline}>
+          Talk to sales
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+export default async function HiringPricingPage() {
+  const plans = await getHiringPlans();
   return (
     <main className="flex-1">
       <PageHero
         title="Pricing that fits your team"
-        subtitle="From a single hiring manager to a recruiting firm or an enterprise talent team."
+        subtitle="Start with a plan that fits, and grow into more jobs, more recruiters and your ATS. Enterprise? Let's talk."
       />
 
       <Section>
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="bg-blue-50 border-2 border-blue-600 rounded-2xl p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Hiring managers & recruiting firms</h2>
-            <p className="text-gray-600 mb-6">
-              Pricing depends on your team size, number of open roles and integrations. Every plan includes:
+        {plans ? (
+          <>
+            <PlanCards plans={plans} />
+            <p className="text-center text-gray-600 mt-8">
+              Every plan includes skills-based candidate ranking, automatic candidate search, the AI job description
+              builder, Standout Signals, AI intros and in-app interview scheduling.
             </p>
-            <div className="mb-8">
-              <CheckList
-                items={[
-                  "Skills-based candidate ranking, with no resume reading",
-                  "Automatic candidate search for every job",
-                  "AI job description builder",
-                  "Skill match charts and Standout Signals",
-                  "AI candidate intros and in-app interview scheduling",
-                ]}
-              />
-            </div>
-            <Link href="/demo" className={buttonClass.primary}>
-              Book a demo
-            </Link>
-          </div>
-
-          <div className="bg-white border border-gray-200 rounded-2xl p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Enterprise</h2>
-            <p className="text-gray-600 mb-6">For larger teams hiring at scale. Everything above, plus:</p>
-            <div className="mb-8">
-              <CheckList
-                items={[
-                  "ATS and HRIS integrations: JobDiva, Bullhorn, Lever, Recruit CRM and 40+ more",
-                  "Every open role, across teams",
-                  "Priority support",
-                ]}
-              />
-            </div>
-            <Link href="/contact-sales" className={buttonClass.outline}>
-              Talk to sales
-            </Link>
-          </div>
-        </div>
+          </>
+        ) : (
+          <HiringPlansFallback />
+        )}
       </Section>
 
       <Section tone="gray">
