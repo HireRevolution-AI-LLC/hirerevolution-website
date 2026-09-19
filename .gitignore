@@ -61,3 +61,6 @@ logs/
 
 # IDE
 .idea/
+
+# Link to the shared marketing assets folder (local only; copy what the site needs into public/)
+/Marketing

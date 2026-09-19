@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Image from "next/image";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,6 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  // Makes the relative og-image URL absolute, as social cards require.
+  metadataBase: new URL("https://hirerevolution.ai"),
   title: "HireRevolution AI | Skills-Based Hiring Made Simple",
   description:
     "Stop wasting time on resume screening. HireRevolution AI matches candidates to roles based on demonstrated skills, not keywords — and it's free for job seekers.",
@@ -40,6 +43,17 @@ export const metadata: Metadata = {
   },
 };
 
+// The logo's wordmark, in its colors (Marketing/images/hirerevolution-logo-horizontal.png),
+// as text so it stays sharp at any size.
+function Wordmark({ className }: { className: string }) {
+  return (
+    <span className={`font-bold tracking-tight text-[#1D2E51] ${className}`}>
+      Hire<span className="text-[#34579C]">Revolution</span>
+      <span className="font-medium">.ai</span>
+    </span>
+  );
+}
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -50,13 +64,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <nav className="sticky top-0 z-50 bg-white border-b border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              <a href="/" className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">HR</span>
-                </div>
-                <span className="font-bold text-lg hidden sm:inline">
-                  HireRevolution
-                </span>
+              <a href="/" className="flex items-center space-x-3" aria-label="HireRevolution.ai home">
+                <Image src="/logo-emblem.png" alt="" width={44} height={44} priority />
+                <Wordmark className="text-xl hidden sm:inline" />
               </a>
               <div className="hidden md:flex space-x-8">
                 <a
@@ -109,10 +119,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
               <div>
                 <div className="flex items-center space-x-3 mb-4">
-                  <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">HR</span>
-                  </div>
-                  <span className="font-bold">HireRevolution AI</span>
+                  <Image src="/logo-emblem.png" alt="" width={40} height={40} />
+                  <Wordmark className="text-lg" />
                 </div>
                 <p className="text-gray-600 text-sm">
                   Skills-based hiring made simple.
