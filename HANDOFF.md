@@ -112,40 +112,75 @@ Today: apex and `www` are Cloudflare **CNAMEs to Hostinger**
 
 Target: apex and `www` point at the reserved IP `159.89.242.172`.
 
-Order matters, because certbot cannot issue for a name that does not yet
-resolve to the droplet:
+Decided 2026-09-21: the apex goes **Cloudflare proxied (orange)** with a
+Cloudflare **Origin CA certificate** on the droplet and zone SSL/TLS at
+**Full (Strict)** — see item 4. That choice removes the old ordering trap.
+`certbot --nginx` needed the name to already resolve to the droplet, so the
+certificate could only be obtained after the DNS change, in a window where
+the apex was live and the TLS was not. An Origin CA certificate is issued by
+Cloudflare on request, with no domain-validation callback, so **everything on
+the droplet can be prepared and tested before any public DNS changes.**
 
-1. Add the six redirects and deploy. *(Done — they just need to be live
-   on the droplet before the DNS change.)*
-2. Point apex + `www` at `159.89.242.172` (A record for the apex; A or CNAME
-   for `www`). Keep them **DNS-only / grey cloud** — see Traps.
-3. On the droplet, issue certs for both names:
-   `certbot --nginx -d hirerevolution.ai -d www.hirerevolution.ai --redirect`
+1. Add the six redirects and deploy. *(Done 2026-09-21.)*
+2. **On the droplet, before touching DNS:** add an nginx server block for
+   `hirerevolution.ai` and `www.hirerevolution.ai`, and install a Cloudflare
+   Origin CA certificate for both names.
 
-   **nginx has no server block for the apex or `www` yet** — today the only
-   `server_name` on the box is `staging.hirerevolution.ai`, so a request
-   arriving with `Host: hirerevolution.ai` falls through to nginx's stock
-   default server and gets a 404. That is expected before the cutover, not a
-   fault. This certbot command is what creates the block; **keep both names on
-   it**, or `www.hirerevolution.ai` resolves to the droplet and still answers
-   404 from the default server.
+   There is no server block for either name today — the only `server_name` on
+   the box is `staging.hirerevolution.ai`, which is why a request arriving
+   with `Host: hirerevolution.ai` currently falls through to nginx's stock
+   default server and gets a 404. That is expected, not a fault. **Put both
+   names on the block**, or `www` will resolve to the droplet and still
+   answer 404 from the default server.
 
-   One consequence for step 4: `robots.ts` decides by `Host`, so its
-   `Allow: /` branch cannot be exercised on the droplet until this block
-   exists. It is verified against the production build locally for both
-   `hirerevolution.ai` and `www`; the `Disallow: /` branch is verified live on
-   staging. Re-check it on the apex right after this step.
-4. **Put the production environment on the droplet and rebuild.** Details
+   Copy the `proxy_set_header` lines from the existing staging block —
+   especially `X-Forwarded-For $proxy_add_x_forwarded_for`. Cloudflare puts
+   the real visitor IP at the front of that header and `clientIp()` in
+   `lib/rate-limit.ts` reads the first entry, so the per-IP limits and
+   Turnstile keep seeing real addresses. `verifyTurnstile` sends that IP to
+   siteverify as `remoteip`, so getting this wrong fails every JD submission,
+   not just the rate limiting.
+
+   Leave staging alone: it stays unproxied on Let's Encrypt, and its certbot
+   renewal must keep working. Only the apex moves to the Origin CA cert, and
+   that one does not renew through certbot at all.
+
+   Test it before the DNS change, with `--resolve` standing in for DNS:
+
+   ```
+   curl -k --resolve hirerevolution.ai:443:159.89.242.172 https://hirerevolution.ai/
+   curl -k --resolve hirerevolution.ai:443:159.89.242.172 https://hirerevolution.ai/robots.txt
+   ```
+
+   `-k` because an Origin CA certificate is trusted by Cloudflare, not by your
+   machine — that is normal, and is exactly why the zone must be Full
+   (Strict). The second command is also the first chance to see `robots.ts`
+   take its `Allow: /` branch: it decides on the `Host` header, so until this
+   server block exists there is no way to reach that branch on the droplet.
+3. **Put the production environment on the droplet and rebuild.** Details
    below — skipping this ships a site whose every Log in button leads to a
    Cloudflare Access wall.
-5. Verify both over HTTPS; verify the six legacy redirects, the three rename
-   redirects and the legal 308s; confirm `curl https://hirerevolution.ai/robots.txt`
-   now says `Allow: /` and advertises the sitemap; and click **Log in**,
-   **Start free** and submit a JD through `/offers/submit-job-description` —
-   those three exercise what step 4 changed and nothing else does.
+4. Point apex + `www` at `159.89.242.172` **and set both to proxied (orange)
+   in the same change**. The grey-cloud rule in Traps only protects
+   Hostinger's certificate renewal while Hostinger still serves the apex; the
+   moment these records move to the droplet that no longer applies. Do not
+   land them grey as an intermediate step — with an Origin CA certificate a
+   grey-clouded apex serves a certificate browsers do not trust, so you would
+   be creating the exact outage you are trying to avoid.
+5. Verify through Cloudflare: both names over HTTPS with a valid public
+   certificate; the six legacy redirects, the three rename redirects and the
+   legal 308s; `curl https://hirerevolution.ai/robots.txt` now says
+   `Allow: /` and advertises the sitemap; and click **Log in**, **Start
+   free** and submit a JD through `/offers/submit-job-description` — those
+   three exercise what step 3 changed and nothing else does.
+
+   Then check Cloudflare itself: SSL/TLS is **Full (Strict)** (Flexible
+   causes redirect loops against a `--redirect` origin), and a cache rule
+   bypasses `/api/*`. Leave Rocket Loader and JS minification **off** — they
+   rewrite script loading and can break React hydration.
 6. Only then decommission the Hostinger site.
 
-#### Step 4 in full: the droplet is still pointed at dev
+#### Step 3 in full: the droplet is still pointed at dev
 
 The droplet builds from `.env.production.local`, which today holds the **dev**
 values. `config/.env.prod` in this repo has the right ones and is correct as
@@ -197,24 +232,50 @@ because the live site had no such page. Once the new site is on the apex, set
 it to `https://hirerevolution.ai/contact-sales` in the app's prod (and dev and
 demo) environments. The docstring in that file says the same thing.
 
-### 4. Decide whether "staging" is production
+### 4. Is "staging" production? — **decided 2026-09-21**
 
-The droplet is named `...-staging` and is a **single 1 vCPU / 1 GB box with one
-PM2 instance and no redundancy**. That is a fine marketing site and a poor
-production story. Before the cutover, decide deliberately whether to:
+The droplet is a single 1 vCPU / 1 GB box with no redundancy. The decision:
+**keep PM2 at one instance and put Cloudflare proxied in front of the apex.**
+No second droplet.
 
-- promote it as-is and accept that a reboot is downtime (cheapest, defensible
-  for a marketing site), or
-- put Cloudflare **proxied** in front of the apex for caching and origin
-  hiding, which changes the TLS story (see Traps), or
-- stand up a second droplet behind a load balancer (probably overkill).
+Why not two PM2 instances on this box, which was the other way to get
+zero-downtime deploys: `lib/rate-limit.ts` keeps its counters in a
+module-level `Map` and says so in its docstring — a second process gets its
+own copy, so every public limit roughly doubles (3 submissions per IP per day
+becomes about 6 on `/api/submit-jd`, `/api/contact-sales` and
+`/api/demo-link`) with nothing logged to tell you. On top of that,
+`max_memory_restart` is **per instance**, so two of them allow 800 MB on a
+1 GB box that also runs nginx and, during each deploy, `npm run build`. And
+two Node processes on one vCPU share one core, so there is no throughput to
+gain. Revisit only after resizing the droplet, and fix the rate limiter in
+the same change.
 
-There is no wrong answer here, but pick one on purpose rather than by default
-— and note that **step 4 of the cutover decides part of it for you**. Once the
-droplet is rebuilt with the production environment, the same build serves both
-`hirerevolution.ai` and `staging.hirerevolution.ai`, so there is no
-dev-pointed environment left on that box. If you want to keep one, that is a
-second droplet, and it is cheaper to decide before the cutover than after.
+Note the rebuild in cutover step 3 leaves no dev-pointed environment on this
+box: one build serves both `hirerevolution.ai` and
+`staging.hirerevolution.ai`. Keeping a real dev-pointed staging means a
+second droplet.
+
+#### What proxying does and does not buy
+
+Caching is now safe in a way it was not before 2026-09-21: the home page used
+to redirect returning job seekers to `/job-seekers` based on a cookie, so `/`
+varied per visitor. That is gone — `/` is the same response for everyone, and
+the only cookie-setting responses are the `?for=` 307s, which Cloudflare will
+not cache because they carry `Set-Cookie`.
+
+**Origin hiding will not work as long as `staging.hirerevolution.ai` stays
+unproxied on the same address.** Locking the origin to Cloudflare's IP ranges
+is what makes proxying hide anything, and that would take staging down with
+it, because staging resolves straight to the reserved IP by design. So either
+accept that the origin stays reachable — and treat proxying as a
+caching/WAF/TLS change only — or move staging behind Cloudflare too (proxied,
+or Access like `app-dev`). Decide this deliberately; do not assume the origin
+is hidden just because the apex is orange.
+
+While the origin is reachable, `X-Forwarded-For` is spoofable by anyone who
+hits it directly with a `Host` header, which is a way around the per-IP rate
+limits. That is already true today; proxying does not make it worse, but it
+does not fix it either.
 
 ## Traps
 
@@ -227,12 +288,18 @@ Hostinger cert expires **2026-11-23**, renewal window opens ~2026-10-24, so
 there is a real deadline: cut over before then, or make sure the records are
 still grey when that window opens.
 
-*After* the cutover this constraint disappears with Hostinger — but it is
-replaced by a new one: the droplet's certbot also needs the name to resolve to
-it, so if you later switch the apex to Cloudflare **proxied**, use an origin
-certificate and Full (Strict), and stop relying on `certbot --nginx` renewal.
-`app-dev.hirerevolution.ai` is a separate record, stays proxied with Cloudflare
-Access, and zone SSL/TLS should remain Full (Strict) throughout.
+*After* the cutover this constraint disappears: the apex goes proxied on
+purpose (item 4), and the Origin CA certificate it uses is issued on request
+rather than domain-validated, so there is no renewal that proxying can break.
+The grey-cloud rule is therefore a **pre-cutover** rule only, and step 4 of
+the sequence above flips the records and the orange cloud together.
+
+Two names keep their own arrangements. `staging.hirerevolution.ai` stays
+**unproxied** on Let's Encrypt, and its `certbot --nginx` renewal must keep
+working — do not proxy it while that is true, or you recreate the Hostinger
+failure on the droplet. `app-dev.hirerevolution.ai` stays proxied behind
+Cloudflare Access. Zone SSL/TLS stays **Full (Strict)** throughout; Flexible
+against an origin that redirects to HTTPS is an infinite redirect loop.
 
 Do **not** accept Hostinger's prompt to move nameservers to
 `ns1/ns2.dns-parking.com`; that removes Cloudflare from the picture entirely.
