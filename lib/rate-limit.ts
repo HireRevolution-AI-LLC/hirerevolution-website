@@ -23,6 +23,26 @@ export function rateLimited(key: string, limit: number, windowMs: number): boole
   return false;
 }
 
+/**
+ * A cheap per-IP ceiling for the form endpoints, checked *before* Turnstile.
+ *
+ * Verifying a token is an outbound HTTPS call with a ten-second timeout, and
+ * it used to be the first thing every POST did, so anyone could make this
+ * server open unbounded connections to Cloudflare by posting junk tokens --
+ * on one PM2 process with 1 GB, that is enough to hurt. The real per-form
+ * limits still run after validation; this one only exists to stop the
+ * expensive step from being free.
+ *
+ * Set well above honest use: a person correcting a validation error and
+ * resubmitting a few times stays far below it.
+ */
+const BURST_LIMIT = 20;
+const BURST_WINDOW_MS = 5 * 60_000;
+
+export function burstLimited(ip: string): boolean {
+  return rateLimited(`burst:${ip}`, BURST_LIMIT, BURST_WINDOW_MS);
+}
+
 export function clientIp(request: NextRequest): string {
   const forwarded = request.headers.get("x-forwarded-for");
   if (forwarded) return forwarded.split(",")[0].trim();

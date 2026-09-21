@@ -14,6 +14,24 @@ const POLL_WINDOW_MS = 10 * 60_000;
 
 const HEX = "0123456789abcdef";
 
+/**
+ * The preview link goes straight into an href, so it has to be ours. Anything
+ * else is dropped rather than shown -- the page already handles a null.
+ */
+function ourHttpsUrl(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    return null;
+  }
+  if (url.protocol !== "https:") return null;
+  const host = url.hostname.toLowerCase();
+  if (host !== "hirerevolution.ai" && !host.endsWith(".hirerevolution.ai")) return null;
+  return url.toString();
+}
+
 function isUuid(value: string): boolean {
   if (value.length !== 36) return false;
   for (let i = 0; i < value.length; i++) {
@@ -52,10 +70,16 @@ export async function GET(request: NextRequest) {
   }
 
   const row = await res.json().catch(() => ({}));
-  return NextResponse.json({
-    status: typeof row.status === "string" ? row.status : "unknown",
-    jobTitle: typeof row.title === "string" ? row.title : null,
-    previewUrl: typeof row.preview_url === "string" ? row.preview_url : null,
-    freeCandidateCap: typeof row.free_candidate_cap === "number" ? row.free_candidate_cap : null,
-  });
+  return NextResponse.json(
+    {
+      status: typeof row.status === "string" ? row.status : "unknown",
+      jobTitle: typeof row.title === "string" ? row.title : null,
+      previewUrl: ourHttpsUrl(row.preview_url),
+      freeCandidateCap: typeof row.free_candidate_cap === "number" ? row.free_candidate_cap : null,
+    },
+    // Holding a submission id is the only thing guarding this response, so it
+    // must not sit in any shared cache. See the note in HANDOFF.md: the id is
+    // unguessable, but the app is where real per-caller authorization belongs.
+    { headers: { "Cache-Control": "no-store" } },
+  );
 }

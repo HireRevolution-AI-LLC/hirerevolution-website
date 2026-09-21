@@ -9,16 +9,21 @@ on:
 env:
   NODE_VERSION: "22"
 
+# This workflow does not write to the repository; it only reads it and then
+# deploys. Narrow the token so a compromised step cannot push.
+permissions:
+  contents: read
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
@@ -30,7 +35,10 @@ jobs:
         run: npm run build
 
       - name: Deploy to staging
-        uses: appleboy/ssh-action@v1
+        # Pinned to a SHA, not the v1 tag: this step receives
+        # SSH_PRIVATE_KEY, which is root on the droplet, so a moved tag
+        # would be a root compromise. Re-pin deliberately when upgrading.
+        uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.2
         with:
           host: ${{ secrets.STAGING_HOST }}
           username: root

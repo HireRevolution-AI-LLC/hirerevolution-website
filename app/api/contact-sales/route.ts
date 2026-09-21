@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AppApiNotConfiguredError, sendContactSales } from "@/lib/app-api";
-import { clientIp, rateLimited } from "@/lib/rate-limit";
+import { burstLimited, clientIp, rateLimited } from "@/lib/rate-limit";
 import { verifyTurnstile } from "@/lib/turnstile";
 
 /**
@@ -32,8 +32,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  // Human check first: nothing else runs for a request without a valid token.
+  // Cheap ceiling first, so the Turnstile call below is not free to trigger.
   const ip = clientIp(request);
+  if (burstLimited(ip)) {
+    return NextResponse.json({ error: "Too many requests. Please slow down." }, { status: 429 });
+  }
+
+  // Human check next: nothing else runs for a request without a valid token.
   if (!(await verifyTurnstile(body["cf-turnstile-response"], "contact_sales", ip))) {
     return NextResponse.json(
       { error: "We couldn't confirm you're human. Please complete the check and try again." },

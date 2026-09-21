@@ -277,6 +277,54 @@ hits it directly with a `Host` header, which is a way around the per-IP rate
 limits. That is already true today; proxying does not make it worse, but it
 does not fix it either.
 
+### 5. Security items that need the droplet or the app — **open**
+
+A security review on 2026-09-21 fixed what lives in this repo: security
+headers including a CSP, `Secure` on the audience cookie, a per-IP burst
+ceiling ahead of the Turnstile call, pinned GitHub Action SHAs with
+`permissions: contents: read`, upstream-supplied URLs no longer trusted into
+an `href`, and `no-store` on the submission-status response. Four things could
+not be fixed from here.
+
+**Deploys run as `root`.** `.github/workflows/deploy.yml` signs in as root over
+SSH, so a compromise of any step in that workflow is a full droplet
+compromise. The action is now pinned to a commit SHA, which closes the moved-
+tag route, but the blast radius is unchanged. The fix needs droplet access: a
+deploy user owning `/var/www/hirerevolution-website`, narrow sudo for
+`pm2 reload` and `systemctl reload nginx`, a new keypair, and `SSH_PRIVATE_KEY`
+plus `username:` updated together.
+
+**`/api/submit-jd/status` has no per-caller authorization.** Anyone holding an
+import UUID can read that job's title and preview link. The id is
+unguessable, never appears in a URL the browser keeps, and is capped at 120
+polls per 10 minutes, so the practical risk is low — but possession of the id
+is the only control. Real scoping belongs in the app: have
+`GET /api/job-imports/{id}` require something tied to the submitter, and have
+the website pass it through. Until then this is accepted risk, not a fixed
+issue.
+
+**nginx advertises its version** (`Server: nginx/1.18.0 (Ubuntu)`). Add
+`server_tokens off;` to the http block when you add the apex server block in
+cutover step 2.
+
+**Rate limits reset on every deploy**, because they live in `lib/rate-limit.ts`
+in process memory and every push to `main` redeploys. Documented in that file
+and accepted: the app enforces the durable per-email and per-company limits.
+Moving these to a shared store is the same change as making two PM2 instances
+safe (item 4).
+
+#### Notes for the app team, not this repo
+
+`/api/demo-link` sets its own `Origin` header to satisfy the demo API's origin
+allowlist. That allowlist therefore stops nothing from a server; if it is
+meant as a security control, it needs to be a shared secret or a signed
+request instead.
+
+`normalizeWebsite` accepts any http(s) URL containing a dot — including
+hostnames that resolve internally and `user:pass@` userinfo — and forwards it
+to the app as data. Nothing here fetches it. If the app ever does, that is
+SSRF, and the validation needs to happen on that side.
+
 ## Traps
 
 **Cloudflare proxying and Hostinger SSL.** While Hostinger still serves the

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AppApiNotConfiguredError, createThirdPartyJD } from "@/lib/app-api";
-import { clientIp, rateLimited } from "@/lib/rate-limit";
+import { burstLimited, clientIp, rateLimited } from "@/lib/rate-limit";
 import { appLogin } from "@/lib/links";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { FREE_EMAIL_DOMAINS, emailDomain, normalizeWebsite, text } from "@/lib/validate";
@@ -35,6 +35,15 @@ function isOfferLimit(detail: unknown): detail is OfferLimit {
   return typeof detail === "object" && detail !== null && (detail as OfferLimit).code === "website_offer_limit";
 }
 
+// Upstream validation text is shown to the visitor, which is the point --
+// but it is written for the app, not for this page, so cap it rather than
+// relay an unbounded internal string into the browser.
+const MAX_UPSTREAM_MESSAGE = 300;
+
+function clamp(message: string): string {
+  return message.length > MAX_UPSTREAM_MESSAGE ? GENERIC_ERROR : message;
+}
+
 /** Turn the app's error body into something a visitor can act on. */
 function upstreamMessage(status: number, detail: unknown): string {
   if (status === 409) {
@@ -50,9 +59,9 @@ function upstreamMessage(status: number, detail: unknown): string {
         .map((d) => String((d as { msg?: string })?.msg ?? ""))
         .map((m) => (m.startsWith("Value error, ") ? m.slice("Value error, ".length) : m))
         .filter(Boolean);
-      if (msgs.length) return msgs.join(" ");
+      if (msgs.length) return clamp(msgs.join(" "));
     }
-    if (typeof detail === "string") return detail;
+    if (typeof detail === "string") return clamp(detail);
   }
   return GENERIC_ERROR;
 }
@@ -65,8 +74,13 @@ export async function POST(request: NextRequest) {
     return badRequest("Invalid request.");
   }
 
-  // Human check first: nothing else runs for a request without a valid token.
+  // Cheap ceiling first, so the Turnstile call below is not free to trigger.
   const ip = clientIp(request);
+  if (burstLimited(ip)) {
+    return NextResponse.json({ error: "Too many requests. Please slow down." }, { status: 429 });
+  }
+
+  // Human check next: nothing else runs for a request without a valid token.
   if (!(await verifyTurnstile(body["cf-turnstile-response"], "submit_jd", ip))) {
     return NextResponse.json(
       { error: "We couldn't confirm you're human. Please complete the check and try again." },
@@ -154,7 +168,9 @@ export async function POST(request: NextRequest) {
         error:
           errBody.detail.message ??
           "You've already used the free website offer for this email or company. Log in to HireRevolution to add more jobs.",
-        loginUrl: errBody.detail.login_url ?? APP_LOGIN_URL,
+        // Deliberately ignores errBody.detail.login_url: this value is put
+        // straight into an href, and it should not be the upstream's choice.
+        loginUrl: APP_LOGIN_URL,
       },
       { status: 429 },
     );

@@ -39,6 +39,9 @@ export function proxy(request: NextRequest) {
       maxAge: ONE_YEAR_SECONDS,
       sameSite: "lax",
       path: "/",
+      // Not in local dev, which is plain http -- the cookie would be dropped
+      // and the audience switch would silently stop working.
+      secure: process.env.NODE_ENV === "production",
     });
   }
   return response;
