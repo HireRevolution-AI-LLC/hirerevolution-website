@@ -46,7 +46,7 @@ export default function HiringFeaturesPage() {
         <Link href="/demo" className={buttonClass.onDark}>
           Book a demo
         </Link>
-        <Link href="/offers/submit-jd" className={buttonClass.outlineOnDark}>
+        <Link href="/offers/submit-job-description" className={buttonClass.outlineOnDark}>
           Try it free with a job
         </Link>
       </CtaBand>

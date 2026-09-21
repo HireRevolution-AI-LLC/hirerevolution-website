@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import SiteFooter from "./components/SiteFooter";
 import SiteNav from "./components/SiteNav";
 import "./globals.css";
+import { PRODUCTION_ORIGIN } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   // Makes the relative og-image URL absolute, as social cards require.
-  metadataBase: new URL("https://hirerevolution.ai"),
+  metadataBase: new URL(PRODUCTION_ORIGIN),
   title: "HireRevolution AI | Skills-Based Hiring Made Simple",
   description:
     "Stop wasting time on resume screening. HireRevolution AI matches candidates to roles based on demonstrated skills, not keywords — and it's free for job seekers.",

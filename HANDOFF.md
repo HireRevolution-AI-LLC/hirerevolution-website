@@ -32,14 +32,31 @@ or look sloppy on the day. This document is that list.
 ### Pages that exist
 
 `/` · `/about` · `/features` · `/pricing` · `/contact` · `/contact-sales` ·
-`/demo` · `/candidates` · `/candidates/features` · `/candidates/pricing` ·
-`/offers/submit-jd` · `/digital-accessibility` · `/fulfillment-policy`
+`/demo` · `/job-seekers` · `/job-seekers/features` · `/job-seekers/pricing` ·
+`/offers/submit-job-description` · `/accessibility` · `/fulfillment-policy`
 
-API routes: `/api/submit-jd`, `/api/contact-sales`, `/api/demo-link`.
+Plus `/sitemap.xml` and `/robots.txt`, added 2026-09-21 (see below).
 
-`/privacy-policy`, `/privacy`, `/terms-of-service`, `/terms` and
-`/accessibility` already 308 to the right place (`next.config.ts`) — the legal
-text lives on `app.hirerevolution.ai` so there is one copy, not two.
+API routes: `/api/submit-jd`, `/api/contact-sales`, `/api/demo-link`. The API
+path keeps the short `submit-jd` name — it is an internal endpoint the offer
+page calls, not a URL anyone types.
+
+`/privacy-policy`, `/privacy`, `/terms-of-service` and `/terms` 308 to the app
+(`next.config.ts`) — the legal text lives on `app.hirerevolution.ai` so there
+is one copy, not two.
+
+**Renamed 2026-09-21**, before launch, while it was still free to do so — the
+old paths 308 to the new ones:
+
+| Was | Now | Why |
+|---|---|---|
+| `/candidates` | `/job-seekers` | every label on that side says "job seekers"; "candidate" is employer vocabulary, and the hiring copy uses it for the people employers review |
+| `/digital-accessibility` | `/accessibility` | the page calls itself "Accessibility Statement"; `/accessibility` used to redirect *to* the long URL, which was backwards |
+| `/offers/submit-jd` | `/offers/submit-job-description` | "JD" is recruiter jargon in a public URL |
+
+The audience *key* is still `candidates` — it is the `hr_audience` cookie value
+and the `?for=` value, so renaming it would reset the remembered choice for
+everyone who already has the cookie. Only the URLs changed.
 
 ## What is actually left
 
@@ -70,6 +87,22 @@ the same paths.
 
 If the Hostinger site is edited again before the cutover, re-check with
 `curl -sS https://hirerevolution.ai/sitemap.xml`.
+
+### 1b. Search engines — **done 2026-09-21**
+
+The site shipped no `sitemap.xml` and no `robots.txt`, and staging returned 200
+to any crawler with no `X-Robots-Tag` — so `staging.hirerevolution.ai` was free
+to index and would have competed with the apex for the same copy once it went
+live.
+
+Both now exist. `app/robots.ts` reads the `Host` header, so one build answers
+`Allow: /` on `hirerevolution.ai` and `www`, and `Disallow: /` everywhere else
+including staging. `app/sitemap.ts` lists the 13 indexable pages from
+`lib/site.ts`, always at the production origin, hiring pages ranked above the
+job-seeker ones. Redirects and API routes are deliberately not in it.
+
+Worth confirming after the cutover that staging has not already been indexed:
+search `site:staging.hirerevolution.ai`.
 
 ### 2. The DNS cutover
 

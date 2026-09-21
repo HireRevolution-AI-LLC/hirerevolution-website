@@ -91,7 +91,7 @@ export default async function HiringPricingPage() {
               Submit your job description and we&apos;ll create it in HireRevolution and search for candidates, free.
               The easiest way to see it work.
             </p>
-            <Link href="/offers/submit-jd" className={buttonClass.primary}>
+            <Link href="/offers/submit-job-description" className={buttonClass.primary}>
               Submit your JD
             </Link>
           </div>

@@ -10,7 +10,7 @@ import {
   NAV_LINKS,
   SHARED_PATHS,
   SWITCH_TO,
-  isCandidatePath,
+  isJobSeekerPath,
   parseAudience,
   type Audience,
 } from "@/lib/audience";
@@ -74,7 +74,7 @@ export default function SiteNav() {
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
 
-  const audience: Audience = isCandidatePath(pathname) ? "candidates" : shared ? remembered : "hiring";
+  const audience: Audience = isJobSeekerPath(pathname) ? "candidates" : shared ? remembered : "hiring";
   const links = NAV_LINKS[audience];
   const cta =
     audience === "hiring"

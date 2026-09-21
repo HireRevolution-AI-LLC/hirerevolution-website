@@ -26,7 +26,7 @@ export default function CandidateHome() {
           <a href={appSignup("individual")} className={buttonClass.onDark}>
             Start free
           </a>
-          <Link href="/candidates/features" className={buttonClass.outlineOnDark}>
+          <Link href="/job-seekers/features" className={buttonClass.outlineOnDark}>
             How it works
           </Link>
         </div>

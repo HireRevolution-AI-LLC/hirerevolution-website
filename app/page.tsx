@@ -6,7 +6,7 @@ import { CheckList, CtaBand, FeatureGrid, ImageHero, Section, buttonClass } from
 import { SWITCH_TO } from "@/lib/audience";
 import { HIRING_FEATURES, VIDEOS } from "@/lib/content";
 
-/** Home for hiring managers, the default audience. Job seekers switch to /candidates. */
+/** Home for hiring managers, the default audience. Job seekers switch to /job-seekers. */
 export default function HiringHome() {
   return (
     <main className="flex-1">
@@ -24,7 +24,7 @@ export default function HiringHome() {
           <Link href="/demo" className={buttonClass.onDark}>
             Book a demo
           </Link>
-          <Link href="/offers/submit-jd" className={buttonClass.outlineOnDark}>
+          <Link href="/offers/submit-job-description" className={buttonClass.outlineOnDark}>
             Try it free with a job
           </Link>
         </div>
@@ -85,7 +85,7 @@ export default function HiringHome() {
               Paste your JD and we&apos;ll create the job in HireRevolution, search for matching candidates, and email
               you a link to them within minutes. Free, for a limited time.
             </p>
-            <Link href="/offers/submit-jd" className={buttonClass.primary}>
+            <Link href="/offers/submit-job-description" className={buttonClass.primary}>
               Submit your JD
             </Link>
           </div>

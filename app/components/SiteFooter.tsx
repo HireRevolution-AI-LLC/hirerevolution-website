@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { CANDIDATES_PREFIX } from "@/lib/audience";
+import { JOB_SEEKERS_PREFIX } from "@/lib/audience";
 import { SOCIAL_LINKS, SUPPORT_EMAIL, appLogin } from "@/lib/links";
 import Wordmark from "./Wordmark";
 
@@ -11,16 +11,16 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
       { label: "Features", href: "/features" },
       { label: "Pricing", href: "/pricing" },
       { label: "Book a demo", href: "/demo" },
-      { label: "Free JD offer", href: "/offers/submit-jd" },
+      { label: "Free JD offer", href: "/offers/submit-job-description" },
       { label: "Talk to sales", href: "/contact-sales" },
     ],
   },
   {
     heading: "For job seekers",
     links: [
-      { label: "How it works", href: CANDIDATES_PREFIX },
-      { label: "Features", href: `${CANDIDATES_PREFIX}/features` },
-      { label: "Pricing", href: `${CANDIDATES_PREFIX}/pricing` },
+      { label: "How it works", href: JOB_SEEKERS_PREFIX },
+      { label: "Features", href: `${JOB_SEEKERS_PREFIX}/features` },
+      { label: "Pricing", href: `${JOB_SEEKERS_PREFIX}/pricing` },
     ],
   },
   {
@@ -38,7 +38,7 @@ const LEGAL_LINKS = [
   { label: "Privacy Policy", href: "/privacy-policy" },
   { label: "Terms of Service", href: "/terms-of-service" },
   { label: "Fulfillment Policy", href: "/fulfillment-policy" },
-  { label: "Accessibility", href: "/digital-accessibility" },
+  { label: "Accessibility", href: "/accessibility" },
 ];
 
 export default function SiteFooter() {
