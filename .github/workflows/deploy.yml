@@ -1,4 +1,4 @@
-name: Deploy to Staging
+name: Deploy the website
 
 on:
   push:
@@ -34,18 +34,28 @@ jobs:
       - name: Build Next.js
         run: npm run build
 
-      - name: Deploy to staging
+      - name: Deploy to the website droplet
         # Pinned to a SHA, not the v1 tag: this step receives
-        # SSH_PRIVATE_KEY, which is root on the droplet, so a moved tag
-        # would be a root compromise. Re-pin deliberately when upgrading.
+        # SSH_PRIVATE_KEY, so a moved tag would hand an attacker whatever
+        # that key can reach. Re-pin deliberately when upgrading.
+        #
+        # That key is `deploy`, not root. It owns
+        # /var/www/hirerevolution-website and runs the site's PM2 daemon --
+        # everything below and nothing else. It has no sudo, and the key is
+        # not in root's authorized_keys, so a compromise of this workflow
+        # costs the website, not the box. Keep it that way: if a step here
+        # ever needs root, give `deploy` one narrow sudoers line for that
+        # exact command instead of moving the login back.
         uses: appleboy/ssh-action@0ff4204d59e8e51228ff73bce53f80d53301dee2 # v1.2.2
         with:
+          # Named STAGING_HOST for historical reasons; it is the droplet's
+          # reserved IP, which does not change at cutover.
           host: ${{ secrets.STAGING_HOST }}
-          username: root
+          username: deploy
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
-            echo "🚀 Deploying HireRevolution website..."
+            echo "🚀 Deploying HireRevolution website as $(whoami)..."
 
             cd /var/www/hirerevolution-website
             git fetch origin main

@@ -1,6 +1,6 @@
 # Handoff: finishing the hirerevolution.ai website
 
-**Written:** 2026-09-20; item 1 closed out 2026-09-21. Everything below was verified against the live hosts
+**Written:** 2026-09-20; items 1, 1b and 5 closed out 2026-09-21. Everything below was verified against the live hosts
 and the repo on that date — where a fact is a guess, it says so.
 
 ## What this project is
@@ -24,8 +24,8 @@ or look sloppy on the day. This document is that list.
 | Host | DigitalOcean droplet `hirerevolution-website-staging`, nyc3, `s-1vcpu-1gb` |
 | Addresses | Droplet `104.236.9.35`; **reserved IP `159.89.242.172`** is what DNS points at. Both answer — the droplet's own IP returns nginx's 404 default server unless you send the right `Host` header. They are the same machine; this is not a stale-state bug (I checked, because it looks like one) |
 | TLS | Let's Encrypt on the droplet via `certbot --nginx`, issued 2026-09-18, **expires 2026-12-17**. Not Cloudflare-terminated — `staging` resolves straight to the reserved IP |
-| Serving | nginx :80/:443 → PM2 (`ecosystem.config.js`, fork mode, 1 instance, restart at 400M) → `next start -p 3000` |
-| CI | `.github/workflows/deploy.yml`. **Push to `main` deploys.** SSH to `STAGING_HOST`, `git reset --hard origin/main`, `npm ci`, `npm run build`, `pm2 reload`. ~90s. Last 5 runs green |
+| Serving | nginx :80/:443 → PM2 (`ecosystem.config.js`, fork mode, 1 instance, restart at 400M) → `next start -p 3000`. PM2 runs as the unprivileged **`deploy`** user (`pm2-deploy.service`), not root |
+| CI | `.github/workflows/deploy.yml`. **Push to `main` deploys.** SSH to `STAGING_HOST` **as `deploy`**, `git reset --hard origin/main`, `npm ci`, `npm run build`, `pm2 reload`. ~90s. Last 5 runs green |
 | Secrets | GitHub repo secrets `STAGING_HOST`, `SSH_PRIVATE_KEY` |
 | Infra as code | `terraform/` (OpenTofu). `terraform.tfstate` and `terraform.tfvars` exist **locally only** — both are gitignored and have never been committed (checked across all branches) |
 
@@ -110,7 +110,16 @@ clean up and no removal requests to file.
 Today: apex and `www` are Cloudflare **CNAMEs to Hostinger**
 (`hirerevolution.ai.cdn.hstgr.net`), DNS-only, resolving to Hostinger IPs.
 
-Target: apex and `www` point at the reserved IP `159.89.242.172`.
+Target: apex and `www` point at the reserved IP `159.89.242.172`, proxied,
+and `staging.hirerevolution.ai` no longer exists.
+
+**Decided 2026-09-21: staging is retired at the cutover, not kept.** There is
+one droplet, one PM2 process and one build; "staging" was only ever a second
+name pointed at it, and after step 3 below it is not even a different
+environment. Retiring the name is what makes step 7 possible, and it removes
+the certbot renewal the rest of this plan had to work around. A genuine
+pre-production environment, if one is wanted later, is a second droplet with
+its own build — see item 4.
 
 Decided 2026-09-21: the apex goes **Cloudflare proxied (orange)** with a
 Cloudflare **Origin CA certificate** on the droplet and zone SSL/TLS at
@@ -141,9 +150,11 @@ the droplet can be prepared and tested before any public DNS changes.**
    siteverify as `remoteip`, so getting this wrong fails every JD submission,
    not just the rate limiting.
 
-   Leave staging alone: it stays unproxied on Let's Encrypt, and its certbot
-   renewal must keep working. Only the apex moves to the Origin CA cert, and
-   that one does not renew through certbot at all.
+   Leave staging's block in place *for now* — it is how you compare before
+   and after, and it is the fallback if the apex misbehaves. It stays
+   unproxied on its Let's Encrypt certificate until step 7 deletes both. Only
+   the apex moves to the Origin CA cert, and that one does not renew through
+   certbot at all.
 
    Test it before the DNS change, with `--resolve` standing in for DNS:
 
@@ -179,6 +190,28 @@ the droplet can be prepared and tested before any public DNS changes.**
    bypasses `/api/*`. Leave Rocket Loader and JS minification **off** — they
    rewrite script loading and can break React hydration.
 6. Only then decommission the Hostinger site.
+7. **Retire staging and close the origin.** Once the apex has served for a
+   day or two and you have stopped wanting a rollback:
+
+   - delete the `staging` record in Cloudflare DNS;
+   - on the droplet, remove its nginx server block, `nginx -t`,
+     `systemctl reload nginx`, then
+     `certbot delete --cert-name staging.hirerevolution.ai`;
+   - drop the name from anywhere it is still configured (`TURNSTILE_HOSTNAMES`
+     in `config/.env.prod`, the `STAGING_HOST` secret's *name* is cosmetic and
+     can stay — it holds the reserved IP, which does not change).
+
+   With no public name resolving to the reserved IP, the origin can finally be
+   closed: narrow the `80` and `443` `inbound_rule` blocks in
+   `terraform/main.tf` from `0.0.0.0/0` to Cloudflare's published ranges
+   (<https://www.cloudflare.com/ips/>) and `tofu apply` — **read the plan
+   first**, and leave port 22 alone or you lock yourself out.
+
+   This is the step that makes proxying worth anything. Until it happens
+   anyone can skip Cloudflare by hitting `159.89.242.172` with a `Host:`
+   header, which bypasses the WAF and lets them write whatever they like into
+   `X-Forwarded-For` — the header both the per-IP rate limits and Turnstile's
+   `remoteip` are read from.
 
 #### Step 3 in full: the droplet is still pointed at dev
 
@@ -217,9 +250,11 @@ compiled bundle, so the switch is not scoped to the apex:
   longer a dev-pointed environment on this box — that is really the decision
   in item 4 below, arriving whether or not it was made deliberately.
 - the JD form on `staging.hirerevolution.ai` **stops working**, because the
-  prod Turnstile list does not include that hostname. If you want staging's
-  form to keep working, append `,staging.hirerevolution.ai` to
-  `TURNSTILE_HOSTNAMES` when you copy the file.
+  prod Turnstile list does not include that hostname. That is expected and
+  fine: staging is being retired, and step 5 verifies the form on the apex,
+  which is the hostname that matters. Do not append
+  `,staging.hirerevolution.ai` to `TURNSTILE_HOSTNAMES` to paper over it —
+  that only widens the list for a name you are about to delete.
 
 Keeping a genuinely separate dev-pointed staging means a second droplet with
 its own build, not a second server block.
@@ -263,55 +298,75 @@ varied per visitor. That is gone — `/` is the same response for everyone, and
 the only cookie-setting responses are the `?for=` 307s, which Cloudflare will
 not cache because they carry `Set-Cookie`.
 
-**Origin hiding will not work as long as `staging.hirerevolution.ai` stays
-unproxied on the same address.** Locking the origin to Cloudflare's IP ranges
-is what makes proxying hide anything, and that would take staging down with
-it, because staging resolves straight to the reserved IP by design. So either
-accept that the origin stays reachable — and treat proxying as a
-caching/WAF/TLS change only — or move staging behind Cloudflare too (proxied,
-or Access like `app-dev`). Decide this deliberately; do not assume the origin
-is hidden just because the apex is orange.
+**Orange cloud alone does not hide the origin.** What hides it is locking
+the droplet's firewall to Cloudflare's IP ranges, and that used to be blocked:
+`staging.hirerevolution.ai` resolves straight to the reserved IP by design, so
+closing the origin would have taken staging down. Retiring staging (cutover
+step 7) removes that constraint, which is most of the reason to retire it.
 
-While the origin is reachable, `X-Forwarded-For` is spoofable by anyone who
-hits it directly with a `Host` header, which is a way around the per-IP rate
-limits. That is already true today; proxying does not make it worse, but it
-does not fix it either.
+Until step 7 lands, treat proxying as a caching/WAF/TLS change only. An
+unclosed origin also means `X-Forwarded-For` is spoofable by anyone who hits
+`159.89.242.172` directly with a `Host` header, and that header is what the
+per-IP rate limits and Turnstile's `remoteip` are read from. True today;
+proxying neither worsens nor fixes it. Step 7 does.
 
-### 5. Security items that need the droplet or the app — **open**
+### 5. Security items from the review — **closed 2026-09-21**
 
 A security review on 2026-09-21 fixed what lives in this repo: security
 headers including a CSP, `Secure` on the audience cookie, a per-IP burst
 ceiling ahead of the Turnstile call, pinned GitHub Action SHAs with
 `permissions: contents: read`, upstream-supplied URLs no longer trusted into
-an `href`, and `no-store` on the submission-status response. Four things could
-not be fixed from here.
+an `href`, and `no-store` on the submission-status response. Four items needed
+the droplet or a design change; all four were closed later the same day.
 
-**Deploys run as `root`.** `.github/workflows/deploy.yml` signs in as root over
-SSH, so a compromise of any step in that workflow is a full droplet
-compromise. The action is now pinned to a commit SHA, which closes the moved-
-tag route, but the blast radius is unchanged. The fix needs droplet access: a
-deploy user owning `/var/www/hirerevolution-website`, narrow sudo for
-`pm2 reload` and `systemctl reload nginx`, a new keypair, and `SSH_PRIVATE_KEY`
-plus `username:` updated together.
+**Deploys no longer run as root.** An unprivileged `deploy` user owns
+`/var/www/hirerevolution-website` and runs the site's PM2 daemon
+(`pm2-deploy.service`; `pm2-root.service` is disabled and `pm2 list` shows the
+app under `deploy`). It has **no sudo**, and the CI key sits in its
+`authorized_keys` and no longer in root's — so a compromise of the deploy
+workflow costs the website, not the droplet. Root SSH with the operator keys
+(`infra-key`, `FE_ssh`) is untouched, and that is now the only way in as root.
+`terraform/user_data.sh` provisions a rebuilt droplet the same way and
+`scripts/push-env.sh` connects as `deploy`. If a deploy step ever needs root,
+give `deploy` one narrow sudoers line for that exact command rather than
+moving the login back.
 
-**`/api/submit-jd/status` has no per-caller authorization.** Anyone holding an
-import UUID can read that job's title and preview link. The id is
-unguessable, never appears in a URL the browser keeps, and is capped at 120
-polls per 10 minutes, so the practical risk is low — but possession of the id
-is the only control. Real scoping belongs in the app: have
-`GET /api/job-imports/{id}` require something tied to the submitter, and have
-the website pass it through. Until then this is accepted risk, not a fixed
-issue.
+**`/api/submit-jd/status` now requires proof that you submitted the job.**
+`POST /api/submit-jd` returns a short-lived token (30 minutes) bound to that
+import id by HMAC, the page sends it back in an `X-Submission-Token` header,
+and the status route answers 403 to anything else — before it rate-limits and
+before it calls the app. Holding a stray import UUID is no longer enough.
 
-**nginx advertises its version** (`Server: nginx/1.18.0 (Ubuntu)`). Add
-`server_tokens off;` to the http block when you add the apex server block in
-cutover step 2.
+`lib/submission-token.ts` derives its signing key from `TURNSTILE_SECRET` with
+HKDF rather than taking a new environment variable, on purpose: a new secret
+would have to reach every environment before the code could ship, and the
+usual failure there is a silent fallback that signs with a constant. Nothing
+can be configured for the JD form and not for this, because `verifyTurnstile`
+already refuses every submission without that secret. Rotating it invalidates
+tokens issued before the rotation, which costs a page mid-poll the same
+fallback it uses for any other failure: "we'll email you the link."
 
-**Rate limits reset on every deploy**, because they live in `lib/rate-limit.ts`
-in process memory and every push to `main` redeploys. Documented in that file
-and accepted: the app enforces the durable per-email and per-company limits.
-Moving these to a shared store is the same change as making two PM2 instances
-safe (item 4).
+The app-side version of this — `GET /api/job-imports/{id}` scoped to the
+submitter — is still worth doing as defence in depth, because the website
+reads every import as the one service user. It is no longer what stands
+between a stranger and someone else's job description.
+
+**nginx no longer advertises its version.** `server_tokens off;` is set in
+`/etc/nginx/nginx.conf` and in `terraform/user_data.sh`; responses say
+`Server: nginx` with no version.
+
+**Rate limits survive a deploy.** `lib/rate-limit.ts` still keeps its counters
+in memory, but mirrors them to a file (`RATE_LIMIT_STATE_FILE`, default
+`/tmp/hirerevolution-rate-limit.json`, mode 0600) — written debounced, flushed
+on the SIGINT/SIGTERM that PM2 sends, reloaded on first use. Before this, the
+24-hour per-IP JD limit reset several times a day, since every push to `main`
+reloads PM2. The file is a mirror and not the source of truth: every
+filesystem error is swallowed, because a disk problem must never turn into a
+failed form submission.
+
+It is still **single-process**. Two PM2 instances would keep two maps and race
+on the file, so this does not make item 4's second instance safe; that still
+needs a shared store.
 
 #### Notes for the app team, not this repo
 
@@ -345,7 +400,8 @@ the sequence above flips the records and the orange cloud together.
 Two names keep their own arrangements. `staging.hirerevolution.ai` stays
 **unproxied** on Let's Encrypt, and its `certbot --nginx` renewal must keep
 working — do not proxy it while that is true, or you recreate the Hostinger
-failure on the droplet. `app-dev.hirerevolution.ai` stays proxied behind
+failure on the droplet. This one expires with the name itself at cutover step
+7; its certificate runs to 2026-12-17, which is well past the cutover. `app-dev.hirerevolution.ai` stays proxied behind
 Cloudflare Access. Zone SSL/TLS stays **Full (Strict)** throughout; Flexible
 against an origin that redirects to HTTPS is an infinite redirect loop.
 
@@ -383,7 +439,12 @@ Environment variables the app code reads: `APP_API_URL`, `DEMO_API_URL`,
 `WEBSITE_SUBMITTER_PASSWORD`, `FIREBASE_WEB_API_KEY`,
 `FIREBASE_AUTH_EMULATOR_HOST`, `TURNSTILE_SECRET`, `TURNSTILE_HOSTNAMES`.
 These live on the droplet, not in the repo — read them there before changing
-anything that depends on them.
+anything that depends on them. `TURNSTILE_SECRET` does double duty: it also
+derives the signing key for submission-status tokens (item 5).
+
+One optional variable is not in `config/.env.*` and does not need to be:
+`RATE_LIMIT_STATE_FILE`, where the rate limiter mirrors its counters. The
+default under `/tmp` is fine on this droplet.
 
 `/offers/submit-jd` posts to the same app endpoint the "Create Job Description"
 button uses in `app.hirerevolution.ai/add-jd`, behind Turnstile and a per-IP

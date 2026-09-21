@@ -42,8 +42,11 @@ KEY="$HOME/.ssh/hirerevolution_website_deploy"
 SSH_OPTS=(-i "$KEY" -o StrictHostKeyChecking=accept-new)
 APP_DIR=/var/www/hirerevolution-website
 
-scp "${SSH_OPTS[@]}" "$FILE" "root@$HOST:$APP_DIR/.env.production.local"
-ssh "${SSH_OPTS[@]}" "root@$HOST" \
+# As `deploy`, which owns the app directory and runs its PM2 daemon. The key
+# below is the CI key and is no longer in root's authorized_keys; operator
+# access to root is via the infra keys.
+scp "${SSH_OPTS[@]}" "$FILE" "deploy@$HOST:$APP_DIR/.env.production.local"
+ssh "${SSH_OPTS[@]}" "deploy@$HOST" \
   "chmod 600 $APP_DIR/.env.production.local && cd $APP_DIR && pm2 reload ecosystem.config.js --update-env >/dev/null && pm2 status"
 
 echo "Pushed $FILE to $HOST"

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { AppApiNotConfiguredError, createThirdPartyJD } from "@/lib/app-api";
 import { burstLimited, clientIp, rateLimited } from "@/lib/rate-limit";
 import { appLogin } from "@/lib/links";
+import { issueSubmissionToken } from "@/lib/submission-token";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { FREE_EMAIL_DOMAINS, emailDomain, normalizeWebsite, text } from "@/lib/validate";
 
@@ -154,9 +155,13 @@ export async function POST(request: NextRequest) {
   if (res.status === 202 || res.ok) {
     const queued = await res.json().catch(() => ({}));
     console.log(`[submit-jd] queued JD for ${companyName} (${website}) as import ${queued.import_id}`);
+    const importId = typeof queued.import_id === "string" ? queued.import_id : null;
     return NextResponse.json({
       ok: true,
-      importId: typeof queued.import_id === "string" ? queued.import_id : null,
+      importId,
+      // Lets this browser -- and only this browser -- poll for the import's
+      // progress. Without it /api/submit-jd/status answers 403.
+      statusToken: importId ? issueSubmissionToken(importId) : null,
       freeCandidateCap: typeof queued.free_candidate_cap === "number" ? queued.free_candidate_cap : null,
     });
   }

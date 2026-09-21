@@ -18,6 +18,7 @@ export default function SubmitJDPage() {
   const [submitted, setSubmitted] = useState<{
     email: string;
     importId: string | null;
+    statusToken: string | null;
     freeCandidateCap: number | null;
   } | null>(null);
   const [loginUrl, setLoginUrl] = useState<string | null>(null);
@@ -56,6 +57,7 @@ export default function SubmitJDPage() {
         setSubmitted({
           email: formData.hiringManagerEmail.trim(),
           importId: body.importId ?? null,
+          statusToken: body.statusToken ?? null,
           freeCandidateCap: body.freeCandidateCap ?? null,
         });
         setFormData(EMPTY_FORM);
@@ -81,6 +83,7 @@ export default function SubmitJDPage() {
       <NextSteps
         email={submitted.email}
         importId={submitted.importId}
+        statusToken={submitted.statusToken}
         freeCandidateCap={submitted.freeCandidateCap}
       />
     );

@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getJobImport } from "@/lib/app-api";
 import { clientIp, rateLimited } from "@/lib/rate-limit";
+import { SUBMISSION_TOKEN_HEADER, verifySubmissionToken } from "@/lib/submission-token";
 
 /**
  * Progress of a website JD submission, polled by the next-steps page until the
  * job exists and its no-login preview link is ready. Reads the import through
  * the app as the website's service user, which submitted it.
+ *
+ * Because it reads as that service user, the app cannot tell one caller from
+ * another -- every request looks like the website. Authorization therefore
+ * has to happen here: the POST that created the import returned a signed
+ * token bound to that id, and nothing is fetched without it.
  */
 
 // The page polls every few seconds for a few minutes.
@@ -50,6 +56,11 @@ export async function GET(request: NextRequest) {
   if (!isUuid(importId)) {
     return NextResponse.json({ error: "Invalid id." }, { status: 400 });
   }
+  // Before the rate limit, so an unauthorized flood cannot spend the real
+  // submitter's poll budget, and before any call to the app.
+  if (!verifySubmissionToken(importId, request.headers.get(SUBMISSION_TOKEN_HEADER))) {
+    return NextResponse.json({ error: "Not found." }, { status: 403 });
+  }
   if (rateLimited(`submit-jd-status:${clientIp(request)}`, POLL_LIMIT, POLL_WINDOW_MS)) {
     return NextResponse.json({ error: "Too many requests." }, { status: 429 });
   }
@@ -77,9 +88,8 @@ export async function GET(request: NextRequest) {
       previewUrl: ourHttpsUrl(row.preview_url),
       freeCandidateCap: typeof row.free_candidate_cap === "number" ? row.free_candidate_cap : null,
     },
-    // Holding a submission id is the only thing guarding this response, so it
-    // must not sit in any shared cache. See the note in HANDOFF.md: the id is
-    // unguessable, but the app is where real per-caller authorization belongs.
+    // Guarded by a token issued to one browser, so it must never sit in a
+    // shared cache.
     { headers: { "Cache-Control": "no-store" } },
   );
 }

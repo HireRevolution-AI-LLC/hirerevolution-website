@@ -21,6 +21,8 @@ const IN_PROGRESS = new Set(["queued", "pending", "processing", "running", "unkn
 type Props = {
   email: string;
   importId: string | null;
+  /** Signed by the API for this import; /api/submit-jd/status needs it. */
+  statusToken: string | null;
   freeCandidateCap: number | null;
 };
 
@@ -29,19 +31,24 @@ type Progress =
   | { state: "ready"; previewUrl: string | null; jobTitle: string | null }
   | { state: "later" }; // failed, timed out, or no import id: the email carries the link
 
-export default function NextSteps({ email, importId, freeCandidateCap }: Props) {
-  const [progress, setProgress] = useState<Progress>(importId ? { state: "building" } : { state: "later" });
+export default function NextSteps({ email, importId, statusToken, freeCandidateCap }: Props) {
+  // No token means no way to poll, so go straight to "we will email it".
+  const canPoll = Boolean(importId && statusToken);
+  const [progress, setProgress] = useState<Progress>(canPoll ? { state: "building" } : { state: "later" });
   const [cap, setCap] = useState(freeCandidateCap ?? DEFAULT_FREE_CANDIDATE_CAP);
 
   useEffect(() => {
-    if (!importId) return;
+    if (!importId || !statusToken) return;
     const started = Date.now();
     let timer: ReturnType<typeof setTimeout>;
     let cancelled = false;
 
     const poll = async () => {
       try {
-        const res = await fetch(`/api/submit-jd/status?id=${encodeURIComponent(importId)}`, { cache: "no-store" });
+        const res = await fetch(`/api/submit-jd/status?id=${encodeURIComponent(importId)}`, {
+          cache: "no-store",
+          headers: { "X-Submission-Token": statusToken },
+        });
         if (res.ok) {
           const body = await res.json();
           if (typeof body.freeCandidateCap === "number") setCap(body.freeCandidateCap);
@@ -69,7 +76,7 @@ export default function NextSteps({ email, importId, freeCandidateCap }: Props) 
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [importId]);
+  }, [importId, statusToken]);
 
   return (
     <main className="flex-1">

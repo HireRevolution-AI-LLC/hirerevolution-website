@@ -15,13 +15,31 @@ curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
 $APT install nodejs git nginx certbot python3-certbot-nginx
 npm install -g pm2
 
+# The site runs as an unprivileged user, and so does its deploy. The CI key
+# goes only in this user's authorized_keys (root keeps the operator keys), so
+# a compromise of the deploy workflow costs the website and not the droplet.
+# `deploy` gets no sudo: git, npm and pm2 all run as itself.
+adduser --disabled-password --gecos "" deploy
+install -d -m 700 -o deploy -g deploy /home/deploy/.ssh
+# Non-fatal: cloud-init normally writes root's authorized_keys before this
+# runs, but if the key is not there yet the box should still finish booting.
+# Without it CI cannot deploy -- copy the key in by hand and carry on.
+grep -F 'github-actions@hirerevolution-website' /root/.ssh/authorized_keys \
+  > /home/deploy/.ssh/authorized_keys \
+  || echo "WARN: CI key not found in root's authorized_keys; add it to /home/deploy/.ssh/authorized_keys"
+chown deploy:deploy /home/deploy/.ssh/authorized_keys
+chmod 600 /home/deploy/.ssh/authorized_keys
+
 git clone ${github_repo} /var/www/hirerevolution-website
-cd /var/www/hirerevolution-website
-npm ci
-npm run build
-pm2 start ecosystem.config.js
-pm2 save
-pm2 startup systemd -u root --hp /root
+chown -R deploy:deploy /var/www/hirerevolution-website
+su - deploy -c 'cd /var/www/hirerevolution-website && npm ci && npm run build && pm2 start ecosystem.config.js && pm2 save'
+pm2 startup systemd -u deploy --hp /home/deploy
+systemctl enable pm2-deploy
+
+# A rebuilt droplet has no .env.production.local: run scripts/push-env.sh.
+
+# Do not advertise the nginx version in responses and error pages.
+sed -i 's|^\(\s*\)#\s*server_tokens off;|\1server_tokens off;|' /etc/nginx/nginx.conf
 
 cat > /etc/nginx/sites-available/default <<'NGINX_CONF'
 server {
