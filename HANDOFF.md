@@ -71,7 +71,7 @@ from reading each page, not from its URL:
 
 | Old URL | Target | Why |
 |---|---|---|
-| `/ai-hiring-solutions` | `/features` | the old nav's "Services" |
+| `/ai-hiring-solutions` | `/` | the old nav's "Services", and it pitched both audiences at once. `/features` is the *hiring* features page -- each audience has its own -- so the home page, which offers both paths, is the honest target |
 | `/ai-hiring-solutions-pricing` | `/pricing` | |
 | `/contact-ai-hiring-solutions` | `/contact` | |
 | `/job-searching` | `/about` | **not a job-seeker page** — it is the About page: founder story and mission. The old nav's "About" and its "Read our story" CTA both pointed here |

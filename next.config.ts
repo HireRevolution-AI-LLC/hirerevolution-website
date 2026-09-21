@@ -15,7 +15,12 @@ import { PRIVACY_URL, TERMS_URL } from "./lib/site";
 // /demo and /fulfillment-policy are also in the old sitemap and already exist
 // here at the same paths; /digital-accessibility is handled below.
 const LEGACY_HOSTINGER_URLS = [
-  { source: "/ai-hiring-solutions", destination: "/features" },
+  // The old "Services" page, which pitched both audiences at once
+  // ("AI Hiring Solutions for Job Seekers and Employers"). /features is the
+  // hiring features page -- each audience has its own -- so there is no
+  // single features page that matches it. The home page is the one that
+  // offers both paths, so it lands there.
+  { source: "/ai-hiring-solutions", destination: "/" },
   { source: "/ai-hiring-solutions-pricing", destination: "/pricing" },
   { source: "/contact-ai-hiring-solutions", destination: "/contact" },
   { source: "/job-searching", destination: "/about" },
