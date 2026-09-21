@@ -135,10 +135,59 @@ resolve to the droplet:
    exists. It is verified against the production build locally for both
    `hirerevolution.ai` and `www`; the `Disallow: /` branch is verified live on
    staging. Re-check it on the apex right after this step.
-4. Verify both over HTTPS; verify the six legacy redirects, the three rename
-   redirects and the legal 308s; and confirm `curl https://hirerevolution.ai/robots.txt`
-   now says `Allow: /` and advertises the sitemap.
-5. Only then decommission the Hostinger site.
+4. **Put the production environment on the droplet and rebuild.** Details
+   below — skipping this ships a site whose every Log in button leads to a
+   Cloudflare Access wall.
+5. Verify both over HTTPS; verify the six legacy redirects, the three rename
+   redirects and the legal 308s; confirm `curl https://hirerevolution.ai/robots.txt`
+   now says `Allow: /` and advertises the sitemap; and click **Log in**,
+   **Start free** and submit a JD through `/offers/submit-job-description` —
+   those three exercise what step 4 changed and nothing else does.
+6. Only then decommission the Hostinger site.
+
+#### Step 4 in full: the droplet is still pointed at dev
+
+The droplet builds from `.env.production.local`, which today holds the **dev**
+values. `config/.env.prod` in this repo has the right ones and is correct as
+written, including both apex names in the Turnstile list. It is gitignored and
+holds the service user's password, so move it out of band — scp it, do not
+paste it anywhere.
+
+| | on the droplet now | `.env.prod` has |
+|---|---|---|
+| `NEXT_PUBLIC_APP_URL` | `https://app-dev.hirerevolution.ai` | `https://app.hirerevolution.ai` |
+| `APP_API_URL` | `https://api-dev.hirerevolution.ai` | `https://api.hirerevolution.ai` |
+| `SITE_ORIGIN` | `https://staging.hirerevolution.ai` | `https://hirerevolution.ai` |
+| `TURNSTILE_HOSTNAMES` | `staging.hirerevolution.ai` | `hirerevolution.ai,www.hirerevolution.ai` |
+| `FIREBASE_WEB_API_KEY`, `WEBSITE_SUBMITTER_PASSWORD` | dev values | prod values |
+
+Two reasons this cannot wait until after launch:
+
+**`NEXT_PUBLIC_APP_URL` is inlined at build time**, not read at runtime, so
+changing the file is not enough — the droplet has to `npm run build` again.
+Until it does, every "Log in" and "Start free" on the public site points at
+`app-dev.hirerevolution.ai`, which sits behind Cloudflare Access. Real
+visitors would meet an Access gate on the primary conversion path, and
+nothing about the page looks broken until someone clicks.
+
+**Turnstile validates the hostname.** `verifyTurnstile` in `lib/turnstile.ts`
+rejects any token whose hostname is not in `TURNSTILE_HOSTNAMES`, so with the
+dev value every real JD submission from the apex is refused.
+
+**This is one build for both names.** nginx will serve `hirerevolution.ai`
+and `staging.hirerevolution.ai` from the same PM2 process and the same
+compiled bundle, so the switch is not scoped to the apex:
+
+- staging starts talking to the **production** app and API too. There is no
+  longer a dev-pointed environment on this box — that is really the decision
+  in item 4 below, arriving whether or not it was made deliberately.
+- the JD form on `staging.hirerevolution.ai` **stops working**, because the
+  prod Turnstile list does not include that hostname. If you want staging's
+  form to keep working, append `,staging.hirerevolution.ai` to
+  `TURNSTILE_HOSTNAMES` when you copy the file.
+
+Keeping a genuinely separate dev-pointed staging means a second droplet with
+its own build, not a second server block.
 
 ### 3. Tell the app the contact-sales page exists
 
@@ -160,7 +209,12 @@ production story. Before the cutover, decide deliberately whether to:
   hiding, which changes the TLS story (see Traps), or
 - stand up a second droplet behind a load balancer (probably overkill).
 
-There is no wrong answer here, but pick one on purpose rather than by default.
+There is no wrong answer here, but pick one on purpose rather than by default
+— and note that **step 4 of the cutover decides part of it for you**. Once the
+droplet is rebuilt with the production environment, the same build serves both
+`hirerevolution.ai` and `staging.hirerevolution.ai`, so there is no
+dev-pointed environment left on that box. If you want to keep one, that is a
+second droplet, and it is cheaper to decide before the cutover than after.
 
 ## Traps
 
