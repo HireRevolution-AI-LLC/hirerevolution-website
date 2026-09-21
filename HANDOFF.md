@@ -1,6 +1,6 @@
 # Handoff: finishing the hirerevolution.ai website
 
-**Written:** 2026-09-20. Everything below was verified against the live hosts
+**Written:** 2026-09-20; item 1 closed out 2026-09-21. Everything below was verified against the live hosts
 and the repo on that date — where a fact is a guess, it says so.
 
 ## What this project is
@@ -43,30 +43,33 @@ text lives on `app.hirerevolution.ai` so there is one copy, not two.
 
 ## What is actually left
 
-### 1. Six old URLs 404 on the new site
+### 1. Six old URLs 404 on the new site — **done 2026-09-21**
 
-These are every non-root entry in the live site's `sitemap.xml`. All six return
-200 today and **404 on staging**. They need redirects in `next.config.ts`
-alongside the legal ones:
+These are every non-root entry in the live site's `sitemap.xml`. All six
+returned 200 on Hostinger and 404 on staging; all six now 308 in
+`next.config.ts`, verified against a production build.
 
-| Old URL (200 today) | Suggested target |
-|---|---|
-| `/ai-hiring-solutions` | `/features` |
-| `/ai-hiring-solutions-pricing` | `/pricing` |
-| `/contact-ai-hiring-solutions` | `/contact` |
-| `/job-searching` | `/candidates` |
-| `/ai-job-applications-candidate-seeker-details` | `/candidates/features` — **confirm** |
-| `/ai-job-applications-seeker-details` | `/candidates/features` — **confirm** |
+Three of the slugs do not describe their contents, so the targets below come
+from reading each page, not from its URL:
 
-The last two are not in the homepage nav and are easy to miss; both carry the
-title "Revolutionizing AI Job Applications with AI Technology" and appear to be
-near-duplicates of each other. Read them before choosing targets — the mapping
-above is my reading of the titles, not a checked content comparison. `/demo`
-is in the sitemap too and already exists on the new site.
+| Old URL | Target | Why |
+|---|---|---|
+| `/ai-hiring-solutions` | `/features` | the old nav's "Services" |
+| `/ai-hiring-solutions-pricing` | `/pricing` | |
+| `/contact-ai-hiring-solutions` | `/contact` | |
+| `/job-searching` | `/about` | **not a job-seeker page** — it is the About page: founder story and mission. The old nav's "About" and its "Read our story" CTA both pointed here |
+| `/ai-job-applications-candidate-seeker-details` | `/features` | **employer-facing** — "Are you an employer looking to attract the right candidates faster?", "Empowering Employers". "candidate-seeker" means one who seeks candidates |
+| `/ai-job-applications-seeker-details` | `/candidates/features` | the genuinely job-seeker-facing one: resume matching, cover letters, applicant database |
 
-Do this **before** the cutover, not after. The source of truth is
-`curl -sS https://hirerevolution.ai/sitemap.xml`; re-run it, because the
-Hostinger site can still be edited.
+The last two share the title "Revolutionizing AI Job Applications with AI
+Technology" and so look like near-duplicates in the sitemap. They are not —
+they address opposite audiences, and an earlier draft of this document guessed
+both wrong on that basis. `/demo`, `/fulfillment-policy` and
+`/digital-accessibility` are in the old sitemap too and already exist here at
+the same paths.
+
+If the Hostinger site is edited again before the cutover, re-check with
+`curl -sS https://hirerevolution.ai/sitemap.xml`.
 
 ### 2. The DNS cutover
 
@@ -78,12 +81,13 @@ Target: apex and `www` point at the reserved IP `159.89.242.172`.
 Order matters, because certbot cannot issue for a name that does not yet
 resolve to the droplet:
 
-1. Add the four redirects and deploy.
+1. Add the six redirects and deploy. *(Done — they just need to be live
+   on the droplet before the DNS change.)*
 2. Point apex + `www` at `159.89.242.172` (A record for the apex; A or CNAME
    for `www`). Keep them **DNS-only / grey cloud** — see Traps.
 3. On the droplet, issue certs for both names:
    `certbot --nginx -d hirerevolution.ai -d www.hirerevolution.ai --redirect`
-4. Verify both over HTTPS, and verify the four redirects and the legal 308s.
+4. Verify both over HTTPS, and verify the six redirects and the legal 308s.
 5. Only then decommission the Hostinger site.
 
 ### 3. Tell the app the contact-sales page exists
