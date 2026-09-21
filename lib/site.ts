@@ -3,6 +3,15 @@ export const PRODUCTION_ORIGIN = "https://hirerevolution.ai";
 export const PRODUCTION_HOST = new URL(PRODUCTION_ORIGIN).host;
 
 /**
+ * The legal text lives in the app so there is one copy, not two. Always the
+ * PRODUCTION app, even when this site is built for staging: the dev app sits
+ * behind Cloudflare Access and would ask a reader to authenticate.
+ */
+export const LEGAL_APP_URL = "https://app.hirerevolution.ai";
+export const PRIVACY_URL = `${LEGAL_APP_URL}/privacy`;
+export const TERMS_URL = `${LEGAL_APP_URL}/terms`;
+
+/**
  * Indexable pages, in the order they matter. Hiring pages rank above the
  * job-seeker ones because hiring teams are the paying audience. Redirects
  * (/privacy, /terms, the old Hostinger URLs) and API routes are deliberately

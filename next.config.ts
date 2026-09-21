@@ -1,9 +1,6 @@
 import type { NextConfig } from "next";
 
-// The app's /privacy and /terms are the one legal text (public, no sign-in),
-// so the website sends its old Hostinger URLs there. Always the production
-// app: the dev app sits behind Cloudflare Access.
-const LEGAL_APP_URL = "https://app.hirerevolution.ai";
+import { PRIVACY_URL, TERMS_URL } from "./lib/site";
 
 // Every non-root URL in the old Hostinger sitemap, so the cutover keeps the
 // inbound links. Targets are the page each old URL actually *contained*, not
@@ -40,10 +37,10 @@ const RENAMED_URLS = [
 const nextConfig: NextConfig = {
   async redirects() {
     return [
-      { source: "/privacy-policy", destination: `${LEGAL_APP_URL}/privacy`, permanent: true },
-      { source: "/privacy", destination: `${LEGAL_APP_URL}/privacy`, permanent: true },
-      { source: "/terms-of-service", destination: `${LEGAL_APP_URL}/terms`, permanent: true },
-      { source: "/terms", destination: `${LEGAL_APP_URL}/terms`, permanent: true },
+      { source: "/privacy-policy", destination: PRIVACY_URL, permanent: true },
+      { source: "/privacy", destination: PRIVACY_URL, permanent: true },
+      { source: "/terms-of-service", destination: TERMS_URL, permanent: true },
+      { source: "/terms", destination: TERMS_URL, permanent: true },
       ...[...LEGACY_HOSTINGER_URLS, ...RENAMED_URLS].map(({ source, destination }) => ({
         source,
         destination,

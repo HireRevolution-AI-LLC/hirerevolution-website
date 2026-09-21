@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { JOB_SEEKERS_PREFIX } from "@/lib/audience";
+import { PRIVACY_URL, TERMS_URL } from "@/lib/site";
 import { SOCIAL_LINKS, SUPPORT_EMAIL, appLogin } from "@/lib/links";
 import Wordmark from "./Wordmark";
 
@@ -33,10 +34,13 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
   },
 ];
 
-// Privacy and Terms redirect to the app's pages (next.config.ts).
+// Privacy and Terms point straight at the app. /privacy-policy and
+// /terms-of-service still redirect there (next.config.ts) for the old
+// Hostinger inbound links, but there is no reason to send our own readers
+// through a redirect on every page of the site.
 const LEGAL_LINKS = [
-  { label: "Privacy Policy", href: "/privacy-policy" },
-  { label: "Terms of Service", href: "/terms-of-service" },
+  { label: "Privacy Policy", href: PRIVACY_URL },
+  { label: "Terms of Service", href: TERMS_URL },
   { label: "Fulfillment Policy", href: "/fulfillment-policy" },
   { label: "Accessibility", href: "/accessibility" },
 ];

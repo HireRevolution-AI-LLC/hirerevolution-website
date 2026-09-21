@@ -101,8 +101,9 @@ including staging. `app/sitemap.ts` lists the 13 indexable pages from
 `lib/site.ts`, always at the production origin, hiring pages ranked above the
 job-seeker ones. Redirects and API routes are deliberately not in it.
 
-Worth confirming after the cutover that staging has not already been indexed:
-search `site:staging.hirerevolution.ai`.
+**Checked 2026-09-21: `site:staging.hirerevolution.ai` returns nothing.** The
+robots file went up before any crawler got there, so there is no index to
+clean up and no removal requests to file.
 
 ### 2. The DNS cutover
 
@@ -120,7 +121,23 @@ resolve to the droplet:
    for `www`). Keep them **DNS-only / grey cloud** — see Traps.
 3. On the droplet, issue certs for both names:
    `certbot --nginx -d hirerevolution.ai -d www.hirerevolution.ai --redirect`
-4. Verify both over HTTPS, and verify the six redirects and the legal 308s.
+
+   **nginx has no server block for the apex or `www` yet** — today the only
+   `server_name` on the box is `staging.hirerevolution.ai`, so a request
+   arriving with `Host: hirerevolution.ai` falls through to nginx's stock
+   default server and gets a 404. That is expected before the cutover, not a
+   fault. This certbot command is what creates the block; **keep both names on
+   it**, or `www.hirerevolution.ai` resolves to the droplet and still answers
+   404 from the default server.
+
+   One consequence for step 4: `robots.ts` decides by `Host`, so its
+   `Allow: /` branch cannot be exercised on the droplet until this block
+   exists. It is verified against the production build locally for both
+   `hirerevolution.ai` and `www`; the `Disallow: /` branch is verified live on
+   staging. Re-check it on the apex right after this step.
+4. Verify both over HTTPS; verify the six legacy redirects, the three rename
+   redirects and the legal 308s; and confirm `curl https://hirerevolution.ai/robots.txt`
+   now says `Allow: /` and advertises the sitemap.
 5. Only then decommission the Hostinger site.
 
 ### 3. Tell the app the contact-sales page exists
