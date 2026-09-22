@@ -148,17 +148,25 @@ the droplet can be prepared and tested before any public DNS changes.**
    but would make Cloudflare Full (Strict) answer **526** for every visitor.
    There is a marker file next to it saying so. To finish: in the Cloudflare
    dashboard, SSL/TLS → Origin Server → Create Certificate → **"I have my own
-   private key and CSR"**, paste `/etc/ssl/hirerevolution/origin.csr`, then
+   private key and CSR"**, paste `/etc/ssl/hirerevolution/origin.csr`, save
+   the issued PEM to a file, and run
 
-   ```
-   # paste the issued PEM over the placeholder, then
-   nginx -t && systemctl reload nginx
-   openssl x509 -in /etc/ssl/hirerevolution/origin.crt -noout -issuer -dates
-   rm /etc/ssl/hirerevolution/PLACEHOLDER-REPLACE-BEFORE-DNS-CUTOVER
+   ```bash
+   scripts/install-origin-cert.sh ~/Downloads/origin.pem
    ```
 
-   The issuer must read `CloudFlare Origin SSL Certificate Authority`. Do not
-   flip DNS until it does.
+   That script refuses anything whose issuer is not `CloudFlare Origin SSL
+   Certificate Authority`, refuses a certificate whose public key does not
+   match `origin.key` on the droplet, and rolls the old file back if nginx
+   will not take the new one. It removes the marker file on success.
+
+   **Do not install it with `ssh host 'cat > origin.crt'`.** The redirect
+   truncates the file the moment it opens, so an interrupted paste leaves an
+   empty certificate — nginx keeps serving from memory but `nginx -t` fails,
+   which means the next reload *or reboot* takes the site down, with nothing
+   visibly wrong until then. This happened on 2026-09-21; the placeholder was
+   regenerated from the CSR and the key, both of which survive precisely
+   because they are separate files.
 
    There is no server block for either name today — the only `server_name` on
    the box is `staging.hirerevolution.ai`, which is why a request arriving
