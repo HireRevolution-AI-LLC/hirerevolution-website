@@ -412,6 +412,47 @@ hostnames that resolve internally and `user:pass@` userinfo — and forwards it
 to the app as data. Nothing here fetches it. If the app ever does, that is
 SSRF, and the validation needs to happen on that side.
 
+### 6. Cloudflare Transform Rules were overriding our headers — **fixed 2026-09-21**
+
+Two **Response Header Transform Rules** existed on this zone, matching exactly
+`hirerevolution.ai` and `www.hirerevolution.ai`: "Secure CSP for root domain"
+and "Secure CSP for www subdomain". They **replaced** the origin's
+`Content-Security-Policy`, `Strict-Transport-Security` and `Permissions-Policy`
+rather than filling gaps.
+
+They were written for the Hostinger site — their CSP allows Google Tag
+Manager, Google Analytics, Calendly, Stripe.js and Google Fonts, none of
+which this site uses (Calendly is a plain outbound link, Stripe prices arrive
+server-side, fonts are self-hosted by `next/font`). What it did **not** allow
+was `challenges.cloudflare.com`, so the moment the apex started serving this
+site, Turnstile's script was blocked and **all three public forms** — submit
+a JD, contact sales, request a demo — stopped working. Nothing looked broken;
+the widget simply never rendered.
+
+Both rules are now **Disabled** (not deleted, so they are one click to
+restore). The origin's own CSP is what ships, verified identical at the edge
+and at the droplet. Delete them once you are confident.
+
+Two headers changed as a result, both deliberately: `X-XSS-Protection` is
+gone (deprecated, and current guidance is not to send it), and HSTS lost
+`includeSubDomains; preload`, leaving the origin's `max-age=31536000`.
+`hstspreload.org` reports this domain is **not** on the preload list, so
+nothing depended on that assertion — which also settles the concern recorded
+in `next.config.ts` about asserting `includeSubDomains` over subdomains other
+repos own.
+
+**The lesson for this zone:** the application owns its CSP, because only the
+app knows what it loads. If a baseline is ever wanted at the edge again, it
+must *add headers when absent* rather than set them unconditionally. A rule
+that overwrites turns a correct origin into a broken site with no error at
+build or deploy time.
+
+One thing this left behind: Cloudflare's proxy injects
+`static.cloudflareinsights.com/beacon.min.js`, which our CSP blocks. It is
+console noise only — Web Analytics does not work. Either add that host to
+`script-src`/`connect-src` in `next.config.ts`, or turn Web Analytics off in
+Cloudflare. Decide rather than leave it erroring.
+
 ## Traps
 
 **Cloudflare proxying and Hostinger SSL.** While Hostinger still serves the
