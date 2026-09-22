@@ -19,7 +19,9 @@ ENV="${1:-}"
 case "$ENV" in
   # Reserved IP of the staging droplet (tofu output reserved_ip).
   dev)  HOST="${STAGING_HOST:-159.89.242.172}" ;;
-  prod) HOST="${PROD_HOST:?set PROD_HOST: there is no production website server yet}" ;;
+  # Same box: staging is retired at the cutover, not replaced by a second
+  # droplet (HANDOFF.md item 4). Override PROD_HOST if that ever changes.
+  prod) HOST="${PROD_HOST:-159.89.242.172}" ;;
   *)    echo "usage: scripts/push-env.sh dev|prod" >&2; exit 2 ;;
 esac
 

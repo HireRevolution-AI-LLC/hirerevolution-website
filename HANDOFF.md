@@ -1,6 +1,7 @@
 # Handoff: finishing the hirerevolution.ai website
 
-**Written:** 2026-09-20; items 1, 1b and 5 closed out 2026-09-21. Everything below was verified against the live hosts
+**Written:** 2026-09-20; items 1, 1b and 5 closed and cutover steps 2-3
+prepared 2026-09-21. Everything below was verified against the live hosts
 and the repo on that date — where a fact is a guess, it says so.
 
 ## What this project is
@@ -23,7 +24,7 @@ or look sloppy on the day. This document is that list.
 | Staging URL | https://staging.hirerevolution.ai — **200, healthy** |
 | Host | DigitalOcean droplet `hirerevolution-website-staging`, nyc3, `s-1vcpu-1gb` |
 | Addresses | Droplet `104.236.9.35`; **reserved IP `159.89.242.172`** is what DNS points at. Both answer — the droplet's own IP returns nginx's 404 default server unless you send the right `Host` header. They are the same machine; this is not a stale-state bug (I checked, because it looks like one) |
-| TLS | Let's Encrypt on the droplet via `certbot --nginx`, issued 2026-09-18, **expires 2026-12-17**. Not Cloudflare-terminated — `staging` resolves straight to the reserved IP |
+| TLS | `staging`: Let's Encrypt via `certbot --nginx`, expires 2026-12-17, not Cloudflare-terminated. Apex + `www`: own block with a key and CSR at `/etc/ssl/hirerevolution/`, currently serving a **self-signed placeholder** — see cutover step 2 |
 | Serving | nginx :80/:443 → PM2 (`ecosystem.config.js`, fork mode, 1 instance, restart at 400M) → `next start -p 3000`. PM2 runs as the unprivileged **`deploy`** user (`pm2-deploy.service`), not root |
 | CI | `.github/workflows/deploy.yml`. **Push to `main` deploys.** SSH to `STAGING_HOST` **as `deploy`**, `git reset --hard origin/main`, `npm ci`, `npm run build`, `pm2 reload`. ~90s. Last 5 runs green |
 | Secrets | GitHub repo secrets `STAGING_HOST`, `SSH_PRIVATE_KEY` |
@@ -133,7 +134,31 @@ the droplet can be prepared and tested before any public DNS changes.**
 1. Add the six redirects and deploy. *(Done 2026-09-21.)*
 2. **On the droplet, before touching DNS:** add an nginx server block for
    `hirerevolution.ai` and `www.hirerevolution.ai`, and install a Cloudflare
-   Origin CA certificate for both names.
+   Origin CA certificate for both names. — **done 2026-09-21, except the
+   certificate.**
+
+   `/etc/nginx/sites-available/hirerevolution.ai` (symlinked into
+   `sites-enabled`) now serves both names on 443 and 301s port 80 to HTTPS.
+   A 2048-bit key and a CSR covering both names were generated **on the
+   droplet**, so the private key has never left it:
+   `/etc/ssl/hirerevolution/origin.{key,csr}`.
+
+   **What is still missing is the certificate itself.** `origin.crt` is a
+   self-signed placeholder, which is enough for the `--resolve` tests below
+   but would make Cloudflare Full (Strict) answer **526** for every visitor.
+   There is a marker file next to it saying so. To finish: in the Cloudflare
+   dashboard, SSL/TLS → Origin Server → Create Certificate → **"I have my own
+   private key and CSR"**, paste `/etc/ssl/hirerevolution/origin.csr`, then
+
+   ```
+   # paste the issued PEM over the placeholder, then
+   nginx -t && systemctl reload nginx
+   openssl x509 -in /etc/ssl/hirerevolution/origin.crt -noout -issuer -dates
+   rm /etc/ssl/hirerevolution/PLACEHOLDER-REPLACE-BEFORE-DNS-CUTOVER
+   ```
+
+   The issuer must read `CloudFlare Origin SSL Certificate Authority`. Do not
+   flip DNS until it does.
 
    There is no server block for either name today — the only `server_name` on
    the box is `staging.hirerevolution.ai`, which is why a request arriving
@@ -150,11 +175,10 @@ the droplet can be prepared and tested before any public DNS changes.**
    siteverify as `remoteip`, so getting this wrong fails every JD submission,
    not just the rate limiting.
 
-   Leave staging's block in place *for now* — it is how you compare before
-   and after, and it is the fallback if the apex misbehaves. It stays
-   unproxied on its Let's Encrypt certificate until step 7 deletes both. Only
-   the apex moves to the Origin CA cert, and that one does not renew through
-   certbot at all.
+   Staging's block is untouched and stays that way — it is how you compare
+   before and after, and it is the fallback if the apex misbehaves. It keeps
+   its Let's Encrypt certificate until step 7 deletes both. Only the apex uses
+   the Origin CA cert, and that one does not renew through certbot at all.
 
    Test it before the DNS change, with `--resolve` standing in for DNS:
 
@@ -168,9 +192,13 @@ the droplet can be prepared and tested before any public DNS changes.**
    (Strict). The second command is also the first chance to see `robots.ts`
    take its `Allow: /` branch: it decides on the `Host` header, so until this
    server block exists there is no way to reach that branch on the droplet.
-3. **Put the production environment on the droplet and rebuild.** Details
-   below — skipping this ships a site whose every Log in button leads to a
-   Cloudflare Access wall.
+3. **Put the production environment on the droplet and rebuild.** —
+   **done 2026-09-21.** `scripts/push-env.sh prod` wrote `config/.env.prod`
+   to the droplet (the previous dev file is kept beside it as
+   `.env.production.local.dev-backup-2026-09-21`, mode 600) and the site was
+   rebuilt, so `NEXT_PUBLIC_APP_URL` is inlined as `app.hirerevolution.ai`.
+   Verified: no `app-dev` reference survives on any page, and `/pricing`
+   renders real plan prices fetched from the **prod** API. Details below.
 4. Point apex + `www` at `159.89.242.172` **and set both to proxied (orange)
    in the same change**. The grey-cloud rule in Traps only protects
    Hostinger's certificate renewal while Hostinger still serves the apex; the
@@ -183,7 +211,10 @@ the droplet can be prepared and tested before any public DNS changes.**
    legal 308s; `curl https://hirerevolution.ai/robots.txt` now says
    `Allow: /` and advertises the sitemap; and click **Log in**, **Start
    free** and submit a JD through `/offers/submit-job-description` — those
-   three exercise what step 3 changed and nothing else does.
+   three exercise what step 3 changed and nothing else does. The JD
+   submission is also the only way to find out whether the Turnstile widget's
+   hostname allowlist was updated; a token that never arrives looks like a
+   form that simply will not submit.
 
    Then check Cloudflare itself: SSL/TLS is **Full (Strict)** (Flexible
    causes redirect loops against a `--redirect` origin), and a cache rule
@@ -215,13 +246,13 @@ the droplet can be prepared and tested before any public DNS changes.**
 
 #### Step 3 in full: the droplet is still pointed at dev
 
-The droplet builds from `.env.production.local`, which today holds the **dev**
-values. `config/.env.prod` in this repo has the right ones and is correct as
-written, including both apex names in the Turnstile list. It is gitignored and
-holds the service user's password, so move it out of band — scp it, do not
+Kept as the record of what changed and why, since it is also the rollback
+procedure: `cp .env.production.local.dev-backup-2026-09-21
+.env.production.local`, rebuild, reload. `config/.env.prod` is gitignored and
+holds the service user's password — move it with `scripts/push-env.sh`, never
 paste it anywhere.
 
-| | on the droplet now | `.env.prod` has |
+| | on the droplet before | `.env.prod`, now live |
 |---|---|---|
 | `NEXT_PUBLIC_APP_URL` | `https://app-dev.hirerevolution.ai` | `https://app.hirerevolution.ai` |
 | `APP_API_URL` | `https://api-dev.hirerevolution.ai` | `https://api.hirerevolution.ai` |
@@ -240,7 +271,19 @@ nothing about the page looks broken until someone clicks.
 
 **Turnstile validates the hostname.** `verifyTurnstile` in `lib/turnstile.ts`
 rejects any token whose hostname is not in `TURNSTILE_HOSTNAMES`, so with the
-dev value every real JD submission from the apex is refused.
+dev value every real JD submission from the apex would be refused. Now set to
+`hirerevolution.ai,www.hirerevolution.ai`.
+
+**One Turnstile check is still outstanding, and it is not in this repo.**
+There is a single widget for both environments — `config/.env.dev` and
+`config/.env.prod` hold the *same* `TURNSTILE_SECRET` (compared by hash), and
+the sitekey is hardcoded in `app/components/Turnstile.tsx`, so the pair
+matches and Cloudflare accepts the secret. What cannot be checked from
+outside the dashboard is that widget's **allowed-hostnames list**. If it only
+names `staging.hirerevolution.ai`, the widget will not issue a token on the
+apex and every JD submission fails at the human check — with the form looking
+perfectly normal. Add `hirerevolution.ai` and `www.hirerevolution.ai` to the
+widget under Turnstile in the Cloudflare dashboard before the flip.
 
 **This is one build for both names.** nginx will serve `hirerevolution.ai`
 and `staging.hirerevolution.ai` from the same PM2 process and the same
