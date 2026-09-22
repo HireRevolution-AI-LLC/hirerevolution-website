@@ -134,8 +134,7 @@ the droplet can be prepared and tested before any public DNS changes.**
 1. Add the six redirects and deploy. *(Done 2026-09-21.)*
 2. **On the droplet, before touching DNS:** add an nginx server block for
    `hirerevolution.ai` and `www.hirerevolution.ai`, and install a Cloudflare
-   Origin CA certificate for both names. — **done 2026-09-21, except the
-   certificate.**
+   Origin CA certificate for both names. — **done 2026-09-21.**
 
    `/etc/nginx/sites-available/hirerevolution.ai` (symlinked into
    `sites-enabled`) now serves both names on 443 and 301s port 80 to HTTPS.
@@ -143,45 +142,27 @@ the droplet can be prepared and tested before any public DNS changes.**
    droplet**, so the private key has never left it:
    `/etc/ssl/hirerevolution/origin.{key,csr}`.
 
-   **What is still missing is the certificate itself.** `origin.crt` is a
-   self-signed placeholder, which is enough for the `--resolve` tests below
-   but would make Cloudflare Full (Strict) answer **526** for every visitor.
-   There is a marker file next to it saying so. To finish: in the Cloudflare
-   dashboard, SSL/TLS → Origin Server → Create Certificate → **"I have my own
-   private key and CSR"**, paste `/etc/ssl/hirerevolution/origin.csr`, save
-   the issued PEM to a file, and run
+   The Cloudflare Origin CA certificate is installed, issued from that CSR
+   for exactly `hirerevolution.ai` and `www.hirerevolution.ai` — no wildcard,
+   so a compromise here cannot produce a valid origin certificate for `app`,
+   `api` or any other subdomain. It expires **2041-09-18** and does not renew
+   through certbot, so there is no renewal that proxying can break. Verified:
+   both names present it over TLS, its public key matches `origin.key`, and
+   staging still presents its own Let's Encrypt certificate.
 
-   ```bash
-   scripts/install-origin-cert.sh ~/Downloads/origin.pem
-   ```
-
-   That script refuses anything whose issuer is not `CloudFlare Origin SSL
-   Certificate Authority`, refuses a certificate whose public key does not
-   match `origin.key` on the droplet, and rolls the old file back if nginx
-   will not take the new one. It removes the marker file on success.
+   Replace it, if it ever needs replacing, with
+   `scripts/install-origin-cert.sh <pem>`. That script refuses a non-PEM, an
+   issuer that is not `CloudFlare Origin SSL Certificate Authority`, and a
+   certificate whose public key does not match the droplet's key; it rolls
+   back if nginx will not load the new file.
 
    **Do not install it with `ssh host 'cat > origin.crt'`.** The redirect
    truncates the file the moment it opens, so an interrupted paste leaves an
    empty certificate — nginx keeps serving from memory but `nginx -t` fails,
    which means the next reload *or reboot* takes the site down, with nothing
-   visibly wrong until then. This happened on 2026-09-21; the placeholder was
-   regenerated from the CSR and the key, both of which survive precisely
+   visibly wrong until then. This happened on 2026-09-21; recovery was
+   regenerating the placeholder from the CSR and the key, which survive
    because they are separate files.
-
-   There is no server block for either name today — the only `server_name` on
-   the box is `staging.hirerevolution.ai`, which is why a request arriving
-   with `Host: hirerevolution.ai` currently falls through to nginx's stock
-   default server and gets a 404. That is expected, not a fault. **Put both
-   names on the block**, or `www` will resolve to the droplet and still
-   answer 404 from the default server.
-
-   Copy the `proxy_set_header` lines from the existing staging block —
-   especially `X-Forwarded-For $proxy_add_x_forwarded_for`. Cloudflare puts
-   the real visitor IP at the front of that header and `clientIp()` in
-   `lib/rate-limit.ts` reads the first entry, so the per-IP limits and
-   Turnstile keep seeing real addresses. `verifyTurnstile` sends that IP to
-   siteverify as `remoteip`, so getting this wrong fails every JD submission,
-   not just the rate limiting.
 
    Staging's block is untouched and stays that way — it is how you compare
    before and after, and it is the fallback if the apex misbehaves. It keeps
