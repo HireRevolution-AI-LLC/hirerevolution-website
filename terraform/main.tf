@@ -41,6 +41,32 @@ resource "digitalocean_droplet" "website" {
     github_repo = "https://github.com/HireRevolution-AI-LLC/hirerevolution-website.git"
     site_domain = var.site_domain
   })
+
+  # user_data runs once, at first boot, so editing user_data.sh changes
+  # nothing on a running droplet -- but without this, OpenTofu treats the edit
+  # as grounds to destroy and recreate it. That happened silently on
+  # 2026-09-21 (the deploy-user change): from then until this line, *any*
+  # apply here, even one meant only for the firewall, planned to wipe the
+  # live site's server. Rebuild deliberately with `tofu apply -replace=...`.
+  lifecycle {
+    ignore_changes = [user_data]
+  }
+}
+
+# Cloudflare's edge ranges, from https://www.cloudflare.com/ips/ (fetched
+# 2026-09-24). The apex and www are proxied, so these are the only addresses a
+# real visitor's request reaches the droplet from. Cloudflare changes this list
+# rarely but does change it; re-check it before any apply that touches the
+# firewall. A range missing here means Cloudflare 522s from that edge.
+locals {
+  cloudflare_ips = [
+    "173.245.48.0/20", "103.21.244.0/22", "103.22.200.0/22", "103.31.4.0/22",
+    "141.101.64.0/18", "108.162.192.0/18", "190.93.240.0/20", "188.114.96.0/20",
+    "197.234.240.0/22", "198.41.128.0/17", "162.158.0.0/15", "104.16.0.0/13",
+    "104.24.0.0/14", "172.64.0.0/13", "131.0.72.0/22",
+    "2400:cb00::/32", "2606:4700::/32", "2803:f800::/32", "2405:b500::/32",
+    "2405:8100::/32", "2a06:98c0::/29", "2c0f:f248::/32",
+  ]
 }
 
 # Create firewall
@@ -48,22 +74,28 @@ resource "digitalocean_firewall" "website" {
   name    = "hirerevolution-website-${var.environment}"
   droplet_ids = [digitalocean_droplet.website.id]
 
+  # SSH stays open to everyone: GitHub Actions deploys over it from addresses
+  # that cannot be listed here. Keys only, no passwords, no root password.
   inbound_rule {
     protocol         = "tcp"
     port_range       = "22"
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
 
+  # Web traffic only from Cloudflare. Without this, anyone could skip the WAF
+  # by sending a Host: header straight to the reserved IP, and write whatever
+  # they liked into X-Forwarded-For -- which the per-IP rate limits and
+  # Turnstile's remoteip both trust.
   inbound_rule {
     protocol         = "tcp"
     port_range       = "80"
-    source_addresses = ["0.0.0.0/0", "::/0"]
+    source_addresses = local.cloudflare_ips
   }
 
   inbound_rule {
     protocol         = "tcp"
     port_range       = "443"
-    source_addresses = ["0.0.0.0/0", "::/0"]
+    source_addresses = local.cloudflare_ips
   }
 
   outbound_rule {
