@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 
+import { API_CSP } from "./lib/csp";
 import { PRIVACY_URL, TERMS_URL } from "./lib/site";
 
 // Every non-root URL in the old Hostinger sitemap, so the cutover keeps the
@@ -39,39 +40,9 @@ const RENAMED_URLS = [
   { source: "/offers/submit-jd", destination: "/offers/submit-job-description" },
 ];
 
-// Everything the browser is allowed to load. Kept in step with the code:
-//   challenges.cloudflare.com  Turnstile's script, its iframe and its XHR
-//   www.youtube-nocookie.com   the embedded player (YouTube.tsx)
-//   i.ytimg.com                video thumbnails, loaded before the player is
-// Fonts are self-hosted by next/font, so no external font origin is needed,
-// and Stripe prices arrive server-side, so there is no Stripe origin either.
-//
-// script-src needs 'unsafe-inline': Next puts hydration data in inline
-// script tags, and a nonce would force every prerendered page to render per
-// request. The directives that do not depend on it -- frame-ancestors,
-// base-uri, form-action, object-src -- are the ones carrying most of the
-// weight here, and they are exact.
-// Turbopack's hot reload runs eval, so `next dev` would break under the
-// production policy. The relaxation is scoped to development only.
-const DEV = process.env.NODE_ENV !== "production";
-
-const CSP = [
-  "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${DEV ? " 'unsafe-eval'" : ""} https://challenges.cloudflare.com`,
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: https://i.ytimg.com",
-  "font-src 'self'",
-  // ws: is the dev server's hot-reload socket.
-  `connect-src 'self'${DEV ? " ws:" : ""} https://challenges.cloudflare.com`,
-  "frame-src https://challenges.cloudflare.com https://www.youtube-nocookie.com",
-  "frame-ancestors 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-  "object-src 'none'",
-].join("; ");
-
+// The page CSP is not here: it carries a per-request nonce, so proxy.ts sets
+// it (lib/csp.ts). These are the headers that are the same on every response.
 const SECURITY_HEADERS = [
-  { key: "Content-Security-Policy", value: CSP },
   // No includeSubDomains and no preload on purpose: this zone has subdomains
   // owned by other repos (app, app-dev, api, api-demo, staging), and preload
   // is close to irreversible. Widen it deliberately once every subdomain is
@@ -85,7 +56,10 @@ const SECURITY_HEADERS = [
 
 const nextConfig: NextConfig = {
   async headers() {
-    return [{ source: "/:path*", headers: SECURITY_HEADERS }];
+    return [
+      { source: "/:path*", headers: SECURITY_HEADERS },
+      { source: "/api/:path*", headers: [{ key: "Content-Security-Policy", value: API_CSP }] },
+    ];
   },
 
   async redirects() {

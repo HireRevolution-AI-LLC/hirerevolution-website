@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "./components/Image";
 import Link from "next/link";
 import FounderSection from "./components/FounderSection";
 import YouTube from "./components/YouTube";

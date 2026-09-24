@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "./Image";
 import Link from "next/link";
 import { JOB_SEEKERS_PREFIX } from "@/lib/audience";
 import { PRIVACY_URL, TERMS_URL } from "@/lib/site";

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import Image from "../components/Image";
 import Link from "next/link";
 import YouTube from "../components/YouTube";
 import { CheckList, PageHero, Section } from "../components/ui";

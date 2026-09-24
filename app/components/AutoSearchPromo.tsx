@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "./Image";
 import { appSignup } from "@/lib/links";
 import { AUTO_SEARCH_PROMO } from "@/lib/content";
 import { buttonClass } from "./ui";

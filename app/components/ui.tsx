@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "./Image";
 import type { ReactNode } from "react";
 
 /** Shared page building blocks, so the hiring and candidate pages look alike. */

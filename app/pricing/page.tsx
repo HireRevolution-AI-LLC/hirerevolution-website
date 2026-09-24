@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import Image from "../components/Image";
 import Link from "next/link";
 import { CheckList, PageHero, Section, buttonClass } from "../components/ui";
 import { SWITCH_TO } from "@/lib/audience";
@@ -11,10 +11,7 @@ export const metadata: Metadata = {
   description: "Plans for hiring managers, recruiting firms and enterprise talent teams, sized to your team and open roles.",
 };
 
-// Prices come from Stripe through the app; refresh them at most hourly.
-export const revalidate = 3600;
-
-/** Shown if the app can't be reached when the page is built or refreshed. */
+/** Shown if the app can't be reached when the page is rendered. */
 function HiringPlansFallback() {
   return (
     <div className="grid md:grid-cols-2 gap-8">

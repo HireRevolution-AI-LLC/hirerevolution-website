@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import Image from "./Image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useSyncExternalStore, type ReactNode } from "react";

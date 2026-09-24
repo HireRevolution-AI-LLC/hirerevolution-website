@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { Geist, Geist_Mono } from "next/font/google";
 import SiteFooter from "./components/SiteFooter";
 import SiteNav from "./components/SiteNav";
@@ -45,7 +46,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Render every page per request. Next stamps the CSP nonce (proxy.ts) onto
+  // its inline scripts while rendering, and a page prerendered at build time
+  // would ship scripts with no nonce -- which the policy then blocks.
+  await connection();
+
   return (
     <html
       lang="en"

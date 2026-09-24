@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import Image from "../components/Image";
 import { FOUNDER_LINKEDIN } from "@/lib/links";
 
 export const metadata: Metadata = {

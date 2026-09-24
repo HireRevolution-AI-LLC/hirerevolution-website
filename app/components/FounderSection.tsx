@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image from "./Image";
 import { FOUNDER_LINKEDIN } from "@/lib/links";
 
 export default function FounderSection() {

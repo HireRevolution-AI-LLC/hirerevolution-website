@@ -68,8 +68,22 @@ function cleanDescription(description: string): string {
     .join("\n");
 }
 
+// Prices come from Stripe through the app; fetch them at most hourly. Pages
+// render per request (the CSP nonce, app/layout.tsx), so without this every
+// view of /pricing would be two calls to the app. Only a success is kept: a
+// failure is retried on the next view rather than pinned for an hour.
+const PLANS_TTL_MS = 60 * 60 * 1000;
+let cachedPlans: { plans: Plan[]; expiresAt: number } | null = null;
+
 /** Hiring plans sorted by price, or null when the app can't be reached (the page then shows "talk to us"). */
 export async function getHiringPlans(): Promise<Plan[] | null> {
+  if (cachedPlans && cachedPlans.expiresAt > Date.now()) return cachedPlans.plans;
+  const plans = await fetchHiringPlans();
+  if (plans) cachedPlans = { plans, expiresAt: Date.now() + PLANS_TTL_MS };
+  return plans;
+}
+
+async function fetchHiringPlans(): Promise<Plan[] | null> {
   try {
     const [monthly, annual] = await Promise.all([subscriptions("month"), subscriptions("year")]);
     const byKey = new Map<string, Plan>();
