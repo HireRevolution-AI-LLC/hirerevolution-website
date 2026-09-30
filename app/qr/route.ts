@@ -17,11 +17,20 @@
  * The redirect is temporary (307) and marked no-store, never permanent: a 308
  * is cached by browsers and Cloudflare indefinitely, and anyone who had
  * scanned a code before would keep landing on the old destination.
+ *
+ * Counting scans: every request is logged as a "[qr] scan" line (timestamp
+ * only, no IP or user agent), so `grep -c '\[qr\] scan'` over the PM2 out log
+ * gives the total. The destination also carries utm_source=qr, which does
+ * nothing on its own today -- the site has no analytics -- but lets any
+ * analytics tool added later attribute these visits, and how they behave on
+ * the site afterwards, to the QR codes. Keep the tag when changing the
+ * destination to another page here; it is pointless on an external site.
  */
 
-const DESTINATION = "/";
+const DESTINATION = "/?utm_source=qr";
 
 export function GET() {
+  console.log(`[qr] scan ${new Date().toISOString()}`);
   return new Response(null, {
     status: 307,
     headers: { Location: DESTINATION, "Cache-Control": "no-store" },
