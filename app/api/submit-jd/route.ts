@@ -54,6 +54,11 @@ function upstreamMessage(status: number, detail: unknown): string {
     return "We're getting a lot of submissions right now. Please try again in a few minutes.";
   }
   if (status === 422) {
+    // The app's guardrail refuses with {code, message}, e.g. a job description
+    // stating a gender, age, race or religion preference. Its message is
+    // written for the person who submitted, so pass it on.
+    const message = (detail as { message?: unknown } | null)?.message;
+    if (typeof message === "string" && message) return clamp(message);
     // Pydantic errors arrive as a list of {msg}; pipeline errors as a string.
     if (Array.isArray(detail)) {
       const msgs = detail
