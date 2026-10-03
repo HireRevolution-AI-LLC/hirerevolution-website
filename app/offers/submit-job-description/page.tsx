@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import Turnstile, { type TurnstileHandle } from "../../components/Turnstile";
+import { ACCEPT, FILE_TOO_LARGE, MAX_UPLOAD_BYTES, UNSUPPORTED_FILE, isParsedFile, isTextFile } from "@/lib/jd-upload";
 import NextSteps from "./NextSteps";
 
 const EMPTY_FORM = {
@@ -26,6 +27,9 @@ export default function SubmitJDPage() {
   const [error, setError] = useState("");
   const [turnstileToken, setTurnstileToken] = useState("");
   const turnstile = useRef<TurnstileHandle>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [upload, setUpload] = useState<{ ok: boolean; message: string } | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -35,6 +39,69 @@ export default function SubmitJDPage() {
       ...prev,
       [name]: value,
     }));
+  };
+
+  // Fills the job description box from a file; it never submits anything. The
+  // visitor still reads what came out and presses "Find My Candidates".
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    // Clear it so choosing the same file again still fires a change.
+    e.target.value = "";
+    if (!file) return;
+    setUpload(null);
+
+    if (!isTextFile(file.name) && !isParsedFile(file.name)) {
+      setUpload({ ok: false, message: UNSUPPORTED_FILE });
+      return;
+    }
+    if (file.size > MAX_UPLOAD_BYTES) {
+      setUpload({ ok: false, message: FILE_TOO_LARGE });
+      return;
+    }
+    // A PDF or DOCX goes to the server, which wants the human check first.
+    // Text files are read right here and need nothing.
+    if (isParsedFile(file.name) && !turnstileToken) {
+      setUpload({ ok: false, message: "Please complete the \"Verify you are human\" check below, then upload again." });
+      return;
+    }
+
+    setUploading(true);
+    try {
+      let text: string;
+      if (isTextFile(file.name)) {
+        text = await file.text();
+      } else {
+        const body = new FormData();
+        body.append("file", file);
+        body.append("cf-turnstile-response", turnstileToken);
+        const response = await fetch("/api/submit-jd/extract", { method: "POST", body });
+        const result = await response.json().catch(() => ({}));
+        // Tokens are single-use: this one is spent whatever happened.
+        turnstile.current?.reset();
+        if (!response.ok || typeof result.text !== "string") {
+          setUpload({
+            ok: false,
+            message:
+              response.status === 413
+                ? FILE_TOO_LARGE
+                : (result.error ?? "We couldn't read that file. Please paste the job description instead."),
+          });
+          return;
+        }
+        text = result.text;
+      }
+      text = text.trim();
+      if (!text) {
+        setUpload({ ok: false, message: "That file is empty." });
+        return;
+      }
+      setFormData((prev) => ({ ...prev, jobDescription: text }));
+      setUpload({ ok: true, message: `Filled in from ${file.name}. Check it over before you send it.` });
+    } catch {
+      setUpload({ ok: false, message: "We couldn't reach our server. Check your connection and try again." });
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -111,7 +178,7 @@ export default function SubmitJDPage() {
                 {[
                   {
                     num: "1",
-                    title: "Paste Your JD",
+                    title: "Paste or Upload Your JD",
                     desc: "Your company, your work email, and the job description. That's it.",
                   },
                   {
@@ -221,10 +288,34 @@ export default function SubmitJDPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
-                  Job Description *
-                </label>
+                <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+                  <label htmlFor="jobDescription" className="block text-sm font-semibold text-gray-900">
+                    Job Description *
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => fileInput.current?.click()}
+                    disabled={uploading || loading}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-blue-600 px-3 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-50 transition disabled:border-gray-300 disabled:text-gray-400 disabled:hover:bg-transparent"
+                  >
+                    <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                      <path d="M9.25 13.25a.75.75 0 0 0 1.5 0V4.636l2.955 3.129a.75.75 0 0 0 1.09-1.03l-4.25-4.5a.75.75 0 0 0-1.09 0l-4.25 4.5a.75.75 0 1 0 1.09 1.03L9.25 4.636v8.614Z" />
+                      <path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z" />
+                    </svg>
+                    {uploading ? "Reading file..." : "Upload a file"}
+                  </button>
+                  <input
+                    ref={fileInput}
+                    type="file"
+                    accept={ACCEPT}
+                    onChange={handleFile}
+                    className="hidden"
+                    tabIndex={-1}
+                    aria-hidden="true"
+                  />
+                </div>
                 <textarea
+                  id="jobDescription"
                   name="jobDescription"
                   value={formData.jobDescription}
                   onChange={handleChange}
@@ -232,10 +323,18 @@ export default function SubmitJDPage() {
                   minLength={50}
                   rows={8}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
-                  placeholder="Paste your job description here..."
+                  placeholder="Paste your job description here, or upload a PDF, Word or text file"
                 />
+                {upload && (
+                  <p
+                    role={upload.ok ? "status" : "alert"}
+                    className={`text-sm mt-1 ${upload.ok ? "text-green-700" : "text-red-700"}`}
+                  >
+                    {upload.message}
+                  </p>
+                )}
                 <p className="text-xs text-gray-600 mt-1">
-                  At least 50 characters. Include the job title, and our AI pulls out the rest
+                  At least 50 characters. Include the job title, and our AI pulls out the rest. Uploads: PDF, Word (.docx) or text, up to 5 MB
                 </p>
               </div>
 

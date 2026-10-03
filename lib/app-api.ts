@@ -74,15 +74,23 @@ async function getIdToken(forceRefresh = false): Promise<string> {
   return data.idToken;
 }
 
-/** Call the app API as the website's service user; signs in again once on a 401. */
+/**
+ * Call the app API as the website's service user; signs in again once on a 401.
+ * A FormData body goes as multipart (fetch sets the boundary); anything else as JSON.
+ */
 async function appFetch(path: string, init: { method: "GET" | "POST"; body?: unknown }): Promise<Response> {
   const { apiUrl } = config();
-  const body = init.body === undefined ? undefined : JSON.stringify(init.body);
+  const multipart = init.body instanceof FormData;
+  const body = multipart
+    ? (init.body as FormData)
+    : init.body === undefined
+      ? undefined
+      : JSON.stringify(init.body);
   const send = async (token: string) =>
     fetch(`${apiUrl}${path}`, {
       method: init.method,
       headers: {
-        ...(body ? { "Content-Type": "application/json" } : {}),
+        ...(body && !multipart ? { "Content-Type": "application/json" } : {}),
         Accept: "application/json",
         Authorization: `Bearer ${token}`,
       },
@@ -117,6 +125,20 @@ export async function createThirdPartyJD(jd: ThirdPartyJD): Promise<Response> {
       source: "website",
     },
   });
+}
+
+/**
+ * The text of an uploaded JD file (PDF, DOCX), read by the same parser the
+ * app's "Upload New" button on /create-job-description uses. Only the text:
+ * that button's endpoint (/api/process-document) also creates the job, owned
+ * by whoever uploads -- here, the service user, with no company or hiring
+ * manager. So the page puts the text in its job description box and the job
+ * is created by createThirdPartyJD on submit, under the offer's limits.
+ */
+export async function extractJDText(file: File): Promise<Response> {
+  const form = new FormData();
+  form.append("file", file, file.name);
+  return appFetch("/api/website/extract-jd-text", { method: "POST", body: form });
 }
 
 /** Status of a background JD import this service user submitted. */
