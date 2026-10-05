@@ -42,6 +42,25 @@ API routes: `/api/submit-jd`, `/api/contact-sales`, `/api/demo-link`. The API
 path keeps the short `submit-jd` name — it is an internal endpoint the offer
 page calls, not a URL anyone types.
 
+`/api/submit-jd/extract`, added 2026-10-05, serves the offer page's "Upload a
+file" button. It takes a PDF or Word (.docx) file, hands it to the app's
+`POST /api/website/extract-jd-text` (ai-hr-chatbot#379), and returns the text,
+which the page puts in the job description box for the visitor to check. It
+creates nothing: the job is still made by `/api/submit-jd` when the visitor
+submits, so the offer's existing limits still decide what gets through. Text
+files are read in the browser and never reach it. Because anyone can call it
+without signing in, it has limits of its own: the form's Turnstile check, 10
+uploads per IP a day, 100 an hour across the whole site, and 5 MB per file,
+refused from `Content-Length` before the body is read. The app's upload
+endpoint, the one behind its "Upload New" button, could not be reused here,
+because it saves the job under whoever uploads, which here would be the
+website's service user.
+
+Since the same change, the app also runs its topic guardrail on every website
+submission before it creates anything, whether the text was pasted or
+uploaded. A refusal comes back as a 422 that `/api/submit-jd` shows to the
+visitor.
+
 `/privacy-policy`, `/privacy`, `/terms-of-service` and `/terms` 308 to the app
 (`next.config.ts`) — the legal text lives on `app.hirerevolution.ai` so there
 is one copy, not two.
@@ -488,6 +507,20 @@ holds a DigitalOcean API token — do not commit it, and do not paste it
 anywhere. Treat a `tofu apply` as capable of destroying the running droplet:
 read the plan. The reserved IP is a separate resource from the droplet, so
 losing the droplet does not lose the address.
+
+**nginx on the droplet is configured by hand, and the repo cannot rebuild
+it.** `/etc/nginx/sites-available/hirerevolution.ai` was written on the server
+(cutover step 2), and `terraform/user_data.sh` still describes the retired
+staging block, so a rebuilt droplet would not reproduce the live config. One
+part of it is load-bearing for a feature: a `location = /api/submit-jd/extract`
+block that raises `client_max_body_size` to `6m`, added 2026-10-05. Without
+it, nginx's 1 MB default refuses most PDF uploads with a bare 413 before they
+reach Next, and the upload button stops working for real files. Every other
+path keeps the 1 MB default on purpose. The block repeats the proxy headers
+from `location /`, X-Forwarded-For included, because `clientIp()` and
+Turnstile depend on them. The file as it stood before that change is in
+`/root/hirerevolution.ai.nginx.bak-2026-10-03`. If the droplet is ever
+rebuilt, copy the live file first.
 
 **Pushing to `main` deploys.** There is no staging-of-staging. A doc-only
 commit still runs a full build and `pm2 reload`.
