@@ -17,10 +17,10 @@ export const HIRING_FEATURES: Feature[] = [
     image: { src: "/images/robots-crowd.webp", alt: "A crowd of robots, one standing out" },
   },
   {
-    title: "Never read another resume",
+    title: "We analyze. You hire.",
     description:
-      "Candidates arrive ranked by the skills they've actually shown, not the keywords they typed. Your shortlist is ready before you open a single file.",
-    image: { src: "/images/robot-reading.webp", alt: "Robot reading a resume so you don't have to" },
+      "Candidates arrive ranked by the skills they've actually shown, not the keywords they typed, with the evidence behind every score. You spend your time deciding, not sorting.",
+    image: { src: "/images/robot-reading.webp", alt: "Robot analyzing a resume" },
   },
   {
     title: "Works with your ATS",

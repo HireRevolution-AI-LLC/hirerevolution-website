@@ -161,11 +161,14 @@ export default function SubmitJDPage() {
       <section className="py-24 px-4 bg-gradient-to-br from-blue-50 to-indigo-50">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
+            <span className="inline-block bg-blue-100 text-blue-800 text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
+              ⏱ Takes under 2 minutes
+            </span>
             <h1 className="text-5xl font-bold text-gray-900 mb-4">
               Submit Your Job Description
             </h1>
             <p className="text-xl text-gray-600">
-              Paste your JD and we&apos;ll create it in HireRevolution, search for matching candidates, and email you a link to them within minutes. Free, for a limited time.
+              Four short fields and a paste. We&apos;ll create the job in HireRevolution, search for matching candidates, and email you a link to them within minutes. Free, for a limited time.
             </p>
           </div>
 
@@ -179,7 +182,7 @@ export default function SubmitJDPage() {
                   {
                     num: "1",
                     title: "Paste or Upload Your JD",
-                    desc: "Your company, your work email, and the job description. That's it.",
+                    desc: "Your company, your work email, and the job description. Under two minutes, start to finish.",
                   },
                   {
                     num: "2",

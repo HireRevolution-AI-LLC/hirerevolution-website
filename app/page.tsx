@@ -49,7 +49,7 @@ export default function HiringHome() {
             <CheckList
               items={[
                 "Post a job in under 5 minutes",
-                "AI ranks candidates so you don't have to read every resume",
+                "AI ranks candidates by skills, with the evidence behind every score",
                 "Get a shareable job link instantly",
               ]}
             />
@@ -77,17 +77,20 @@ export default function HiringHome() {
             <Image src="/images/early-access.webp" alt="Robot stepping through a glowing doorway" fill sizes="208px" className="object-cover" />
           </div>
           <div>
-            <p className="text-blue-700 font-semibold text-sm uppercase tracking-wider mb-3">Limited-time offer</p>
+            <p className="text-blue-700 font-semibold text-sm uppercase tracking-wider mb-3">
+              Limited-time offer · under 2 minutes
+            </p>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-balance">
-              Send us a job description. We&apos;ll find the candidates.
+              Two minutes to submit a job. Minutes later, your candidates.
             </h2>
             <p className="text-lg text-gray-600 mb-6">
               Paste your JD and we&apos;ll create the job in HireRevolution, search for matching candidates, and email
               you a link to them within minutes. Free, for a limited time.
             </p>
             <Link href="/offers/submit-job-description" className={buttonClass.primary}>
-              Submit your JD
+              Try it now →
             </Link>
+            <p className="text-sm text-gray-500 mt-4">No credit card. No sales call.</p>
           </div>
         </div>
       </section>

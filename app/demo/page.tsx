@@ -18,7 +18,7 @@ export default function DemoPage() {
   return (
     <main className="flex-1">
       <PageHero
-        title="Find candidates without reading a single resume"
+        title="See your best candidates, ranked by the skills they've shown"
         subtitle="See how it works: try it yourself right now, or let us walk you through it. No credit card required."
       />
 
@@ -35,7 +35,7 @@ export default function DemoPage() {
               <CheckList
                 items={[
                   "Post a job in under 5 minutes",
-                  "AI ranks candidates so you don't have to read every resume",
+                  "AI ranks candidates by skills, with the evidence behind every score",
                   "Get a shareable job link instantly",
                 ]}
               />
@@ -95,7 +95,7 @@ export default function DemoPage() {
         </ol>
       </Section>
 
-      <Section title="Watch it work">
+      <Section id="howdoesitwork" title="Watch it work">
         <div className="grid md:grid-cols-2 gap-10">
           <YouTube id={VIDEOS.fourClicks.id} title={VIDEOS.fourClicks.title} />
           <YouTube id={VIDEOS.analysis.id} title={VIDEOS.analysis.title} />

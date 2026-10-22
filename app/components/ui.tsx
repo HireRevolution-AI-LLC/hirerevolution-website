@@ -54,18 +54,23 @@ export function ImageHero({
 }
 
 export function Section({
+  id,
   title,
   subtitle,
   tone = "white",
   children,
 }: {
+  id?: string;
   title?: ReactNode;
   subtitle?: ReactNode;
   tone?: "white" | "gray";
   children: ReactNode;
 }) {
   return (
-    <section className={`py-20 px-4 ${tone === "gray" ? "bg-gray-50" : "bg-white"}`}>
+    <section
+      id={id}
+      className={`py-20 px-4 ${tone === "gray" ? "bg-gray-50" : "bg-white"} ${id ? "scroll-mt-28 sm:scroll-mt-32" : ""}`}
+    >
       <div className="max-w-6xl mx-auto">
         {title && <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center text-balance">{title}</h2>}
         {subtitle && <p className="text-xl text-gray-600 text-center mb-12 max-w-2xl mx-auto text-balance">{subtitle}</p>}

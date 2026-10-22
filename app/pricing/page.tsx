@@ -23,7 +23,7 @@ function HiringPlansFallback() {
         <div className="mb-8">
           <CheckList
             items={[
-              "Skills-based candidate ranking, with no resume reading",
+              "Skills-based candidate ranking, with the evidence behind every score",
               "Automatic candidate search for every job",
               "AI job description builder",
               "Skill match charts and Standout Signals",

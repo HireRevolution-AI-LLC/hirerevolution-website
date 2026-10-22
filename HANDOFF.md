@@ -472,6 +472,33 @@ console noise only — Web Analytics does not work. Either add that host to
 `script-src`/`connect-src` in `next.config.ts`, or turn Web Analytics off in
 Cloudflare. Decide rather than leave it erroring.
 
+### 7. What the JD offer promises vs what it shows — **planned elsewhere, 2026-09-21**
+
+The first real submission after the cutover worked, but its no-login preview
+(`app.hirerevolution.ai/r/…`) opened with Applicants 0 and Candidates matching
+50%+ 0, while this site's next-steps page promises "its matching candidates".
+
+Settled, so nobody re-litigates it: **the preview is public and anonymized by
+design** — job, counts and ranked cards with no name or contact detail;
+signing in is what reveals identity. And the anonymous path takes **no
+subscription**; a company without one is capped on how many candidates it is
+*shown*, not shut out.
+
+Everything else — why the counts were zero, where the free cap is evaluated,
+whether the weekly "new candidates" email is even switched on in prod, and
+what this site should therefore say — is one plan, in the app repo with the
+others:
+
+`~/PycharmProjects/ai-hr-chatbot/plans/PLAN_website_offer_preview_and_subscription.md`
+
+The copy changes it calls for land in this repo, in
+`app/offers/submit-job-description/NextSteps.tsx`, and they are the last thing
+in that plan rather than the first. Two rules when the time comes: the page
+must **set expectations without promising a schedule** — we can hit technical
+problems, and naming a cadence turns an ordinary delay into a broken promise a
+visitor can point at — and nothing gets written until the app side confirms
+the weekly candidate email actually sends in production.
+
 ## Traps
 
 **Cloudflare proxying and Hostinger SSL.** While Hostinger still serves the
