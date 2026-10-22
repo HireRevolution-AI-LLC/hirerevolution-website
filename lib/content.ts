@@ -61,7 +61,7 @@ export const HIRING_FEATURES: Feature[] = [
   {
     title: "Running in minutes, not months",
     description:
-      "Nothing to install, nothing to migrate, no training. Paste a job description and the matching starts while you're still reading this.",
+      "Nothing to install, nothing to migrate, no training. Upload or paste a job description, or let our AI interview you for one, and the matching starts while you're still reading this.",
     image: { src: "/images/early-access.webp", alt: "Robot stepping through a glowing doorway" },
   },
 ];
