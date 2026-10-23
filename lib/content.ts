@@ -17,7 +17,7 @@ export const HIRING_FEATURES: Feature[] = [
     image: { src: "/images/robots-crowd.webp", alt: "A crowd of robots, one standing out" },
   },
   {
-    title: "We analyze. You hire.",
+    title: "Skills, not keywords",
     description:
       "Candidates arrive ranked by the skills they've actually shown, not the keywords they typed, with the evidence behind every score. You spend your time deciding, not sorting.",
     image: { src: "/images/robot-reading.webp", alt: "Robot analyzing a resume" },

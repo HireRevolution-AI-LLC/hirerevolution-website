@@ -14,7 +14,7 @@ export default function HiringHome() {
         eyebrow="For hiring managers & recruiting teams"
         title={
           <>
-            Stop reading <span className="text-blue-400">resumes.</span>
+            We analyze. <span className="text-blue-400">You hire.</span>
           </>
         }
         subtitle="HireRevolution ranks candidates by the skills they can prove, not the keywords they typed. It works with the ATS you already use."
