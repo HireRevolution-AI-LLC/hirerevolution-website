@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "./components/Image";
 import Link from "next/link";
 import FounderSection from "./components/FounderSection";
@@ -5,6 +6,11 @@ import YouTube from "./components/YouTube";
 import { CheckList, CtaBand, FeatureGrid, ImageHero, Section, buttonClass } from "./components/ui";
 import { SWITCH_TO } from "@/lib/audience";
 import { HIRING_FEATURES, VIDEOS } from "@/lib/content";
+
+// Title and description come from the root layout.
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 /** Home for hiring managers, the default audience. Job seekers switch to /job-seekers. */
 export default function HiringHome() {

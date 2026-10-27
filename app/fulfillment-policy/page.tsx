@@ -5,6 +5,7 @@ import { SUPPORT_EMAIL } from "@/lib/links";
 export const metadata: Metadata = {
   title: "Fulfillment Policy: Refunds, Delivery and Cancellation | HireRevolution AI",
   description: "How HireRevolution AI handles refunds, delivery, returns and cancellation.",
+  alternates: { canonical: "/fulfillment-policy" },
 };
 
 const Support = () => (

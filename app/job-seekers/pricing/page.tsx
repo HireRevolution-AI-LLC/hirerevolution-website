@@ -7,6 +7,7 @@ import { appSignup } from "@/lib/links";
 export const metadata: Metadata = {
   title: "Pricing for Job Seekers | HireRevolution AI",
   description: "Your HireRevolution AI profile, resumes and cover letters are free. Auto-search is free for a limited time.",
+  alternates: { canonical: "/job-seekers/pricing" },
 };
 
 export default function CandidatePricingPage() {

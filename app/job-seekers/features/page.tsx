@@ -7,6 +7,7 @@ import { appSignup } from "@/lib/links";
 export const metadata: Metadata = {
   title: "Features for Job Seekers | HireRevolution AI",
   description: "Auto-search finds jobs that match your skills, free for a limited time. Plus a free AI-built skills profile, tailored resumes and cover letters, and a recruiter-searchable profile.",
+  alternates: { canonical: "/job-seekers/features" },
 };
 
 export default function CandidateFeaturesPage() {

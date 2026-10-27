@@ -4,6 +4,7 @@ import LegalPage, { LegalSection } from "../components/LegalPage";
 export const metadata: Metadata = {
   title: "Accessibility Statement | HireRevolution AI",
   description: "HireRevolution AI's commitment to digital accessibility.",
+  alternates: { canonical: "/accessibility" },
 };
 
 const ACCESSIBILITY_EMAIL = "accessibility@hirerevolution.ai";

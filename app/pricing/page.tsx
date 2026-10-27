@@ -9,6 +9,7 @@ import PlanCards from "./PlanCards";
 export const metadata: Metadata = {
   title: "Pricing for Hiring Teams | HireRevolution AI",
   description: "Plans for hiring managers, recruiting firms and enterprise talent teams, sized to your team and open roles.",
+  alternates: { canonical: "/pricing" },
 };
 
 /** Shown if the app can't be reached when the page is rendered. */

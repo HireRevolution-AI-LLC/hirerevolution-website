@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   title: "See a Demo | HireRevolution AI for Hiring Teams",
   description:
     "Try HireRevolution yourself in our demo environment, no call needed, or book a 20-minute live demo with our team.",
+  alternates: { canonical: "/demo" },
 };
 
 export default function DemoPage() {

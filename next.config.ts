@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 import { API_CSP } from "./lib/csp";
-import { PRIVACY_URL, TERMS_URL } from "./lib/site";
+import { PRIVACY_URL, PRODUCTION_HOST, PRODUCTION_ORIGIN, TERMS_URL } from "./lib/site";
 
 // Every non-root URL in the old Hostinger sitemap, so the cutover keeps the
 // inbound links. Targets are the page each old URL actually *contained*, not
@@ -64,6 +64,14 @@ const nextConfig: NextConfig = {
 
   async redirects() {
     return [
+      // www answered 200 with the same pages, which Search Console reported as
+      // "Duplicate without user-selected canonical". One host, one copy.
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: `www.${PRODUCTION_HOST}` }],
+        destination: `${PRODUCTION_ORIGIN}/:path*`,
+        permanent: true,
+      },
       { source: "/privacy-policy", destination: PRIVACY_URL, permanent: true },
       { source: "/privacy", destination: PRIVACY_URL, permanent: true },
       { source: "/terms-of-service", destination: TERMS_URL, permanent: true },

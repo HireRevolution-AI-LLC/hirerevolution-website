@@ -6,6 +6,7 @@ import { CALENDLY_URL, SOCIAL_LINKS, SUPPORT_EMAIL } from "@/lib/links";
 export const metadata: Metadata = {
   title: "Contact | HireRevolution AI",
   description: "Talk to sales, book a demo, or email our team.",
+  alternates: { canonical: "/contact" },
 };
 
 const OPTIONS = [

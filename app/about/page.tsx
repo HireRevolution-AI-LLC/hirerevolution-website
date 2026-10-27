@@ -5,6 +5,7 @@ import { FOUNDER_LINKEDIN } from "@/lib/links";
 export const metadata: Metadata = {
   title: "About | HireRevolution AI",
   description: "Why we built HireRevolution: hiring is broken on both sides, and skills should matter more than keywords.",
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {
