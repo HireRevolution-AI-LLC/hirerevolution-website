@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Image from "./components/Image";
 import Link from "next/link";
 import FounderSection from "./components/FounderSection";
@@ -6,11 +5,18 @@ import YouTube from "./components/YouTube";
 import { CheckList, CtaBand, FeatureGrid, ImageHero, Section, buttonClass } from "./components/ui";
 import { SWITCH_TO } from "@/lib/audience";
 import { HIRING_FEATURES, VIDEOS } from "@/lib/content";
+import { pageMetadata } from "@/lib/metadata";
 
-// Title and description come from the root layout.
-export const metadata: Metadata = {
-  alternates: { canonical: "/" },
-};
+export const metadata = pageMetadata({
+  path: "/",
+  title: "HireRevolution AI | Skills-Based Hiring Made Simple",
+  description:
+    "Stop wasting time on resume screening. HireRevolution AI matches candidates to roles based on demonstrated skills, not keywords — and it's free for job seekers.",
+  preview: {
+    description:
+      "Stop wasting time on resume screening. HireRevolution AI matches candidates to roles based on demonstrated skills, not keywords.",
+  },
+});
 
 /** Home for hiring managers, the default audience. Job seekers switch to /job-seekers. */
 export default function HiringHome() {

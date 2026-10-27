@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import LegalPage, { LegalSection } from "../components/LegalPage";
 import { SUPPORT_EMAIL } from "@/lib/links";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
+  path: "/fulfillment-policy",
   title: "Fulfillment Policy: Refunds, Delivery and Cancellation | HireRevolution AI",
-  description: "How HireRevolution AI handles refunds, delivery, returns and cancellation.",
-  alternates: { canonical: "/fulfillment-policy" },
-};
+  description:
+    "How HireRevolution AI handles refunds, delivery, returns and cancellation.",
+});
 
 const Support = () => (
   <a href={`mailto:${SUPPORT_EMAIL}`} className="text-blue-700 hover:text-blue-800">

@@ -1,13 +1,14 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHero, Section, buttonClass } from "../components/ui";
 import { CALENDLY_URL, SOCIAL_LINKS, SUPPORT_EMAIL } from "@/lib/links";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
+  path: "/contact",
   title: "Contact | HireRevolution AI",
-  description: "Talk to sales, book a demo, or email our team.",
-  alternates: { canonical: "/contact" },
-};
+  description:
+    "Talk to sales, book a demo, or email our team.",
+});
 
 const OPTIONS = [
   {

@@ -64,7 +64,7 @@ export default function ContactSalesPage() {
           <div className="max-w-2xl mx-auto text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">Thanks, we&apos;ll be in touch</h1>
             <p className="text-lg text-gray-600">
-              Someone from our team will reply within one business day. Need us sooner? Email{" "}
+              Someone from our team will reply within 2 business days. Need us sooner? Email{" "}
               <a href="mailto:support@hirerevolution.ai" className="text-blue-600 hover:text-blue-700">
                 support@hirerevolution.ai
               </a>

@@ -1,11 +1,12 @@
-import type { Metadata } from "next";
 import LegalPage, { LegalSection } from "../components/LegalPage";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
+  path: "/accessibility",
   title: "Accessibility Statement | HireRevolution AI",
-  description: "HireRevolution AI's commitment to digital accessibility.",
-  alternates: { canonical: "/accessibility" },
-};
+  description:
+    "HireRevolution AI's commitment to digital accessibility.",
+});
 
 const ACCESSIBILITY_EMAIL = "accessibility@hirerevolution.ai";
 

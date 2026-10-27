@@ -1,14 +1,15 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckList, PageHero, Section, buttonClass } from "../../components/ui";
 import { AUTO_SEARCH_PROMO } from "@/lib/content";
 import { appSignup } from "@/lib/links";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
+  path: "/job-seekers/pricing",
   title: "Pricing for Job Seekers | HireRevolution AI",
-  description: "Your HireRevolution AI profile, resumes and cover letters are free. Auto-search is free for a limited time.",
-  alternates: { canonical: "/job-seekers/pricing" },
-};
+  description:
+    "Your HireRevolution AI profile, resumes and cover letters are free. Auto-search is free for a limited time.",
+});
 
 export default function CandidatePricingPage() {
   return (

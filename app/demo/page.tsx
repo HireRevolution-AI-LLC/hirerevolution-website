@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Image from "../components/Image";
 import Link from "next/link";
 import YouTube from "../components/YouTube";
@@ -7,13 +6,14 @@ import { SWITCH_TO } from "@/lib/audience";
 import { HIRING_FEATURES, VIDEOS } from "@/lib/content";
 import { CALENDLY_URL } from "@/lib/links";
 import DemoLinkForm from "./DemoLinkForm";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
+  path: "/demo",
   title: "See a Demo | HireRevolution AI for Hiring Teams",
   description:
     "Try HireRevolution yourself in our demo environment, no call needed, or book a 20-minute live demo with our team.",
-  alternates: { canonical: "/demo" },
-};
+});
 
 export default function DemoPage() {
   return (

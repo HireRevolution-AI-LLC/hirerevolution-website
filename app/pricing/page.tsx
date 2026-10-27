@@ -1,16 +1,17 @@
-import type { Metadata } from "next";
 import Image from "../components/Image";
 import Link from "next/link";
 import { CheckList, PageHero, Section, buttonClass } from "../components/ui";
 import { SWITCH_TO } from "@/lib/audience";
 import { getHiringPlans } from "@/lib/pricing";
 import PlanCards from "./PlanCards";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
+  path: "/pricing",
   title: "Pricing for Hiring Teams | HireRevolution AI",
-  description: "Plans for hiring managers, recruiting firms and enterprise talent teams, sized to your team and open roles.",
-  alternates: { canonical: "/pricing" },
-};
+  description:
+    "Plans for hiring managers, recruiting firms and enterprise talent teams, sized to your team and open roles.",
+});
 
 /** Shown if the app can't be reached when the page is rendered. */
 function HiringPlansFallback() {

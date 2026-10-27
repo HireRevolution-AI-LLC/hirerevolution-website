@@ -1,14 +1,15 @@
-import type { Metadata } from "next";
 import AutoSearchPromo from "../../components/AutoSearchPromo";
 import { CtaBand, FeatureGrid, PageHero, Section, buttonClass } from "../../components/ui";
 import { CANDIDATE_FEATURES, CANDIDATE_MORE_FEATURES } from "@/lib/content";
 import { appSignup } from "@/lib/links";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
+  path: "/job-seekers/features",
   title: "Features for Job Seekers | HireRevolution AI",
-  description: "Auto-search finds jobs that match your skills, free for a limited time. Plus a free AI-built skills profile, tailored resumes and cover letters, and a recruiter-searchable profile.",
-  alternates: { canonical: "/job-seekers/features" },
-};
+  description:
+    "Auto-search finds jobs that match your skills, free for a limited time. Plus a free AI-built skills profile, tailored resumes and cover letters, and a recruiter-searchable profile.",
+});
 
 export default function CandidateFeaturesPage() {
   return (

@@ -1,12 +1,13 @@
-import type { Metadata } from "next";
 import Image from "../components/Image";
 import { FOUNDER_LINKEDIN } from "@/lib/links";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
+  path: "/about",
   title: "About | HireRevolution AI",
-  description: "Why we built HireRevolution: hiring is broken on both sides, and skills should matter more than keywords.",
-  alternates: { canonical: "/about" },
-};
+  description:
+    "Why we built HireRevolution: hiring is broken on both sides, and skills should matter more than keywords.",
+});
 
 export default function AboutPage() {
   return (

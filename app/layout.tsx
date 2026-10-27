@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import SiteFooter from "./components/SiteFooter";
 import SiteNav from "./components/SiteNav";
 import "./globals.css";
+import { OG_IMAGE, SITE_NAME } from "@/lib/metadata";
 import { PRODUCTION_ORIGIN } from "@/lib/site";
 
 const geistSans = Geist({
@@ -16,34 +17,17 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Only what a page without its own metadata (the 404) falls back on. Real
+// pages set the full set through pageMetadata(), and nothing here names a URL,
+// so no page can inherit the home page's address.
 export const metadata: Metadata = {
-  // Makes the relative og-image URL absolute, as social cards require.
+  // Makes relative canonical, og:url and og-image URLs absolute.
   metadataBase: new URL(PRODUCTION_ORIGIN),
   title: "HireRevolution AI | Skills-Based Hiring Made Simple",
   description:
     "Stop wasting time on resume screening. HireRevolution AI matches candidates to roles based on demonstrated skills, not keywords — and it's free for job seekers.",
-  openGraph: {
-    title: "HireRevolution AI | Skills-Based Hiring Made Simple",
-    description:
-      "Stop wasting time on resume screening. HireRevolution AI matches candidates to roles based on demonstrated skills, not keywords.",
-    url: "https://hirerevolution.ai",
-    siteName: "HireRevolution AI",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-      },
-    ],
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "HireRevolution AI | Skills-Based Hiring Made Simple",
-    description:
-      "Stop wasting time on resume screening. HireRevolution AI matches candidates based on skills.",
-    images: ["/og-image.jpg"],
-  },
+  openGraph: { siteName: SITE_NAME, images: [OG_IMAGE], type: "website" },
+  twitter: { card: "summary_large_image", images: [OG_IMAGE.url] },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

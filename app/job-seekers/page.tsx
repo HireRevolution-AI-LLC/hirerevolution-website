@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import AutoSearchPromo from "../components/AutoSearchPromo";
 import FounderSection from "../components/FounderSection";
@@ -6,13 +5,14 @@ import { CheckList, CtaBand, FeatureGrid, ImageHero, Section, buttonClass } from
 import { SWITCH_TO } from "@/lib/audience";
 import { CANDIDATE_FEATURES } from "@/lib/content";
 import { appSignup } from "@/lib/links";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
+  path: "/job-seekers",
   title: "HireRevolution AI for Job Seekers | Get Matched on Your Skills",
   description:
     "Our AI interviews you to capture the skills you'd never think to list, then matches you to jobs on what you can actually do. Your profile, resumes and cover letters are free, and auto-search is free for a limited time.",
-  alternates: { canonical: "/job-seekers" },
-};
+});
 
 export default function CandidateHome() {
   return (

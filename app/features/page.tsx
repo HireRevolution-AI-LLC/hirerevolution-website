@@ -1,16 +1,16 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import YouTube from "../components/YouTube";
 import { CtaBand, FeatureGrid, PageHero, Section, buttonClass } from "../components/ui";
 import { SWITCH_TO } from "@/lib/audience";
 import { HIRING_COMING_SOON, HIRING_FEATURES, HIRING_TEAM_FEATURES, VIDEOS } from "@/lib/content";
+import { pageMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
+export const metadata = pageMetadata({
+  path: "/features",
   title: "Features for Hiring Teams | HireRevolution AI",
   description:
     "Automatic candidate search, skills-based ranking, 40+ ATS integrations, candidate sourcing, shareable ranked shortlists, an AI job description builder, Standout Signals, AI intros and interview scheduling.",
-  alternates: { canonical: "/features" },
-};
+});
 
 export default function HiringFeaturesPage() {
   return (
