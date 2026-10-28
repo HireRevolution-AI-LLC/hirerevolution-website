@@ -53,7 +53,7 @@ export default function CompareAiInterviewPage() {
             {
               topic: "Does wording matter?",
               left: "Does a candidate lose out for describing a skill differently from your job description?",
-              right: "No. More than 45,000 ways of wording a skill resolve to about 12,600 skills.",
+              right: "No. More than 44,000 ways of wording a skill resolve to about 13,200 skills.",
             },
             {
               topic: "What's in it for the candidate?",

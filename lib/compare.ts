@@ -37,13 +37,32 @@ export const COMPARE_PAGES: ComparePage[] = [
 ];
 
 /**
- * ATSs the live site already names as integrations (lib/content.ts) and that
- * have a native connector in the app. Add a name here only after confirming
- * a working connection, not just a connector file.
+ * ATSs a customer can connect today: each is in the app's provider registry
+ * (ai-hr-chatbot `integration_endpoints.py`, connect_mode "merge") and in
+ * Merge's public ATS catalog. Recruit CRM and Loxo are in the registry too but
+ * not in Merge's catalog, and their native connectors are stubs, so they wait
+ * until a connection is confirmed. The first five lead the hero.
  */
-export const NAMED_ATS = ["JobDiva", "Bullhorn", "Lever", "Recruit CRM"];
+export const NAMED_ATS = [
+  "JobDiva",
+  "Bullhorn",
+  "Lever",
+  "Greenhouse",
+  "Workday",
+  "iCIMS",
+  "JobAdder",
+  "Manatal",
+  "Teamtailor",
+  "Zoho Recruit",
+  "Breezy HR",
+];
 
-/** Measured on production on this date; re-measure before changing the copy. */
+/**
+ * Measured on production 2026-10-28 across the 259 candidates with a skills
+ * profile: median 103 skills, 100% with years, 14.8% inferred (is_implied),
+ * 99.5% with evidence; 44,777 active skill wordings (skill_variant) resolve to
+ * 13,212 active skills (skill_canonical). Re-measure before changing the copy.
+ */
 export const PROFILE_STATS_AS_OF = "October 2026";
 
 export const PROFILE_STATS: { figure: string; label: string; detail: string }[] = [
@@ -53,14 +72,14 @@ export const PROFILE_STATS: { figure: string; label: string; detail: string }[] 
     detail: "Each one carries years of experience and the line of work history it came from.",
   },
   {
-    figure: "1 in 6",
+    figure: "1 in 7",
     label: "skills the candidate never listed",
     detail: "Inferred from the work a resume describes. Each shows the reason it was inferred.",
   },
   {
-    figure: "45,000+",
+    figure: "44,000+",
     label: "ways of wording a skill",
-    detail: "Resolve to about 12,600 skills, so a different term on a resume doesn't cost a candidate the match.",
+    detail: "Resolve to about 13,200 skills, so a different term on a resume doesn't cost a candidate the match.",
   },
 ];
 
