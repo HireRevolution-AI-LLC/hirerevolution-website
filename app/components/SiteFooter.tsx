@@ -13,6 +13,7 @@ const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
       { label: "Pricing", href: "/pricing" },
       { label: "Book a demo", href: "/demo" },
       { label: "Free JD offer", href: "/offers/submit-job-description" },
+      { label: "Compare", href: "/compare" },
       { label: "Talk to sales", href: "/contact-sales" },
     ],
   },
