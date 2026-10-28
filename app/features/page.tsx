@@ -56,7 +56,7 @@ export default function HiringFeaturesPage() {
           Book a demo
         </Link>
         <Link href="/offers/submit-job-description" className={buttonClass.outlineOnDark}>
-          Try it free with a job
+          Try it free with your JD
         </Link>
       </CtaBand>
     </main>
