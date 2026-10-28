@@ -27,7 +27,7 @@ export default function AtsLayerDiagram() {
     <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-2xl ring-1 ring-white/10">
       <svg viewBox="0 0 420 400" className="w-full h-auto" role="img" aria-labelledby="ats-diagram-title" fontFamily={FONT}>
         <title id="ats-diagram-title">
-          HireRevolution sits on top of your ATS. Jobs and candidates come up from your ATS; match analysis goes back
+          HireRevolution AI sits on top of your ATS. Jobs and candidates come up from your ATS; match analysis goes back
           down to it. HireRevolution also adds job seekers and a wider-market search.
         </title>
 
@@ -44,7 +44,7 @@ export default function AtsLayerDiagram() {
         <circle cx={58} cy={146} r={30} fill="#fff" />
         <image href="/logo-emblem.png" x={32} y={120} width={52} height={52} />
         <text x={100} y={143} fontSize={22} fontWeight={700} fill="#fff">
-          HireRevolution
+          HireRevolution AI
         </text>
         <text x={100} y={166} fontSize={15} fill={TINT}>
           The matching layer
