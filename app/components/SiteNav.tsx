@@ -118,7 +118,7 @@ export default function SiteNav() {
               <Link
                 key={l.href}
                 href={l.href}
-                className={`text-sm font-medium ${pathname === l.href ? "text-blue-700" : "text-gray-600 hover:text-gray-900"}`}
+                className={`text-sm font-medium ${pathname === l.href || pathname.startsWith(`${l.href}/`) ? "text-blue-700" : "text-gray-600 hover:text-gray-900"}`}
               >
                 {l.label}
               </Link>
