@@ -18,7 +18,7 @@ export default function CompareAiInterviewPage() {
       <CompareHero
         eyebrow="HireRevolution and AI interview tools"
         title="An AI interview that builds a profile, not just a score"
-        subtitle="We interview each candidate once and match them to every job. We interview the hiring manager too."
+        subtitle="One interview per candidate, matched to every job. Hiring managers are interviewed too."
         image={{ src: "/images/robot-reading.webp", alt: "The HireRevolution robot reading a resume" }}
       />
 
@@ -30,38 +30,38 @@ export default function CompareAiInterviewPage() {
             {
               topic: "Who gets interviewed?",
               icon: "chat",
-              left: "Only candidates, or the hiring manager too?",
-              right: "Both. The job is profiled as deeply as the candidate.",
+              left: "Candidates only, or hiring managers too?",
+              right: "Both, so the job is profiled too.",
             },
             {
               topic: "Tied to one job?",
               icon: "briefcase",
-              left: "Does an interview count for one job, or every job?",
-              right: "Every job. One interview, matched against every job on HireRevolution.",
+              left: "One job, or every job?",
+              right: "Every job, from one interview.",
             },
             {
               topic: "What you get",
               icon: "profile",
-              left: "A score, a recording, or a full profile?",
-              right: "A full profile: about 100 skills with years, skills never listed, and Standout Signals.",
+              left: "A score, or a full profile?",
+              right: "~100 skills with years, unlisted skills, Standout Signals.",
             },
             {
               topic: "Can you see why?",
               icon: "eye",
-              left: "Can you trace a score back to its evidence?",
-              right: "Yes. Each skill points to its line of work history.",
+              left: "Can you trace a score to evidence?",
+              right: "Yes. Each skill links to its source line.",
             },
             {
               topic: "Does wording matter?",
               icon: "sparkles",
-              left: "Does describing a skill differently cost a candidate?",
-              right: "No. 44,000+ ways of wording a skill resolve to about 13,200 skills.",
+              left: "Does wording cost a match?",
+              right: "No. 44,000+ wordings map to ~13,200 skills.",
             },
             {
               topic: "For the candidate",
               icon: "users",
-              left: "Do candidates get anything for their time?",
-              right: "Yes. It's free, and their profile keeps matching new jobs.",
+              left: "What's in it for them?",
+              right: "It's free, and the profile keeps matching new jobs.",
             },
           ]}
         />
@@ -73,7 +73,7 @@ export default function CompareAiInterviewPage() {
 
       <StatsBand />
 
-      <Section title="See it work" subtitle="A walkthrough of a candidate analysis in the product.">
+      <Section title="See it work">
         <ProductVideo id={VIDEOS.analysis.id} title={VIDEOS.analysis.title} />
       </Section>
 
@@ -82,15 +82,15 @@ export default function CompareAiInterviewPage() {
           items={[
             {
               q: "Can I use HireRevolution alongside an AI interview tool I already have?",
-              a: "Yes. A screening tool assesses who applied. We show who fits, including people who haven't applied.",
+              a: "Yes. Screening assesses who applied. We show who fits, applied or not.",
             },
             {
               q: "Why interview the hiring manager?",
-              a: "Job descriptions leave out what only the hiring manager knows. A thin job description gives a thin match.",
+              a: "Job descriptions miss what only the hiring manager knows.",
             },
             {
               q: "Does the AI make the hiring decision?",
-              a: "No. It ranks candidates and shows the evidence. Your team decides.",
+              a: "No. It ranks and shows the evidence. Your team decides.",
             },
           ]}
         />

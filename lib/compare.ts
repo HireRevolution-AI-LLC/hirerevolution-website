@@ -20,19 +20,19 @@ export const COMPARE_PAGES: ComparePage[] = [
     path: "/compare/ats",
     title: "your ATS",
     summary:
-      "Keep the ATS you run. We connect to it and add skills evidence to every candidate.",
+      "Keep your ATS. We connect to it and add skills evidence.",
   },
   {
     path: "/compare/ai-interview-tools",
-    title: "AI interview and screening tools",
+    title: "AI interview tools",
     summary:
-      "Many tools assess the applicants to one job. Ours builds a profile matched to every job, and interviews the hiring manager too.",
+      "One interview per candidate, matched to every job.",
   },
   {
     path: "/compare/talent-rediscovery",
-    title: "talent rediscovery and re-engagement tools",
+    title: "talent rediscovery tools",
     summary:
-      "Re-engagement brings past candidates back. We show which of them fit the job, and why.",
+      "They bring candidates back. We show which ones fit.",
   },
 ];
 
@@ -73,18 +73,18 @@ export const PROFILE_STATS_AS_OF = "October 2026";
 export const PROFILE_STATS: { figure: string; label: string; detail: string }[] = [
   {
     figure: "~100",
-    label: "skills per candidate profile",
-    detail: "Each with years of experience and the line it came from.",
+    label: "skills per profile",
+    detail: "Each with years and its source.",
   },
   {
     figure: "1 in 7",
-    label: "skills the candidate never listed",
-    detail: "Inferred from the work a resume describes, with the reason shown.",
+    label: "skills never listed",
+    detail: "Inferred, with the reason shown.",
   },
   {
     figure: "44,000+",
-    label: "ways of wording a skill",
-    detail: "Resolve to about 13,200 skills, so wording never costs a match.",
+    label: "ways to word a skill",
+    detail: "Mapped to about 13,200 skills.",
   },
 ];
 

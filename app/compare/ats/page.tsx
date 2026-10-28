@@ -22,7 +22,7 @@ export default function CompareAtsPage() {
       <CompareHero
         eyebrow="HireRevolution and your ATS"
         title="Keep your ATS. Add the evidence."
-        subtitle={`No rip-and-replace. HireRevolution works with ${atsShort}, and shows which candidates can do the job.`}
+        subtitle={`Works with ${atsShort}. No rip-and-replace.`}
         visual={<AtsLayerDiagram />}
       />
 
@@ -34,32 +34,32 @@ export default function CompareAtsPage() {
             {
               topic: "The job",
               icon: "briefcase",
-              left: "Jobs, stages and records, as you run them today.",
-              right: "A job profile from interviewing the hiring manager.",
+              left: "Jobs, stages and records.",
+              right: "A job profile from a hiring-manager interview.",
             },
             {
               topic: "Candidates",
               icon: "users",
-              left: "Everyone who applied or is in your database.",
-              right: "Plus job seekers on HireRevolution and people we find across the wider market.",
+              left: "Applicants and your database.",
+              right: "Plus job seekers and wider-market finds.",
             },
             {
               topic: "The profile",
               icon: "profile",
-              left: "The record and resume your team keeps.",
-              right: "About 100 skills with years, skills never listed, and Standout Signals.",
+              left: "The resume and record.",
+              right: "~100 skills with years, unlisted skills, Standout Signals.",
             },
             {
               topic: "Who to call",
               icon: "chart",
-              left: "Your team's process and judgment.",
-              right: "A ranked shortlist and at-a-glance match chart, shared in one link.",
+              left: "Your team's judgment.",
+              right: "A ranked shortlist and match chart, shared in one link.",
             },
             {
               topic: "Where results live",
               icon: "writeBack",
               left: "In your ATS.",
-              right: "Our match analysis, written back to the candidate's record.",
+              right: "Match analysis, written back to the record.",
             },
           ]}
         />
@@ -68,7 +68,7 @@ export default function CompareAtsPage() {
       <StatsBand />
 
       {/* Not VIDEOS.stack: its integrations screen shows other vendors' logos. */}
-      <Section tone="tint" title="See it work" subtitle="Matched candidates for a job, in four clicks.">
+      <Section tone="tint" title="See it work">
         <ProductVideo id={VIDEOS.fourClicks.id} title={VIDEOS.fourClicks.title} />
       </Section>
 
@@ -77,7 +77,7 @@ export default function CompareAtsPage() {
           items={[
             {
               q: "Do I have to replace my ATS?",
-              a: "No. Your jobs, candidates and records stay where they are.",
+              a: "No. Your jobs, candidates and records stay put.",
             },
             {
               q: "Which applicant tracking systems do you work with?",
@@ -93,11 +93,7 @@ export default function CompareAtsPage() {
             },
             {
               q: "My ATS already has AI matching. What does this add?",
-              a: "Profiles built by interviewing the candidate and the hiring manager, which a typical ATS record doesn't hold. And matching candidates who aren't in your database yet.",
-            },
-            {
-              q: "Will my recruiters need a new workflow?",
-              a: "Very little. Matching starts when a job comes across, and results can be written back to the records they already use.",
+              a: "Profiles from interviewing the candidate and the hiring manager, plus candidates not yet in your database.",
             },
             {
               q: "Which plans include an ATS connection?",

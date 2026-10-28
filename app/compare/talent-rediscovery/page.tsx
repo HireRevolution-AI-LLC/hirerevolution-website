@@ -18,7 +18,7 @@ export default function CompareRediscoveryPage() {
       <CompareHero
         eyebrow="HireRevolution and rediscovery tools"
         title="Bring candidates back. Then know which ones fit."
-        subtitle="Rediscovery tools re-engage your past candidates. We show which of them fit the job, and add people you don't have yet."
+        subtitle="Rediscovery tools re-engage past candidates. We show who fits, and add people you don't have."
         image={{ src: "/images/robots-crowd.webp", alt: "A crowd of robots, one standing out" }}
       />
 
@@ -30,26 +30,26 @@ export default function CompareRediscoveryPage() {
             {
               topic: "Focus",
               icon: "target",
-              left: "Getting past candidates to respond again.",
-              right: "Showing who fits each job, with the evidence.",
+              left: "Getting past candidates to respond.",
+              right: "Showing who fits, with evidence.",
             },
             {
               topic: "Candidates",
               icon: "users",
-              left: "Those already in your ATS and talent pools.",
-              right: "Yours, plus job seekers on HireRevolution and people we find across the wider market.",
+              left: "Your ATS and talent pools.",
+              right: "Yours, plus job seekers and wider-market finds.",
             },
             {
               topic: "What you see",
               icon: "chart",
-              left: "Who engaged, responded or updated their details.",
-              right: "A ranked shortlist, a match chart and Standout Signals.",
+              left: "Who engaged or responded.",
+              right: "Ranked shortlist, match chart, Standout Signals.",
             },
             {
               topic: "Old records",
               icon: "refresh",
-              left: "Revived by reaching out.",
-              right: "Read for skills never listed, so they can match new kinds of jobs.",
+              left: "Revived by outreach.",
+              right: "Read for unlisted skills, so they fit new jobs.",
             },
           ]}
         />
@@ -57,7 +57,7 @@ export default function CompareRediscoveryPage() {
 
       <StatsBand />
 
-      <Section tone="tint" title="See it work" subtitle="Find the candidates you'd otherwise miss.">
+      <Section tone="tint" title="See it work">
         <ProductVideo id={VIDEOS.jd.id} title={VIDEOS.jd.title} />
       </Section>
 
@@ -66,15 +66,15 @@ export default function CompareRediscoveryPage() {
           items={[
             {
               q: "We already use a re-engagement tool. Do we need HireRevolution?",
-              a: "They do different jobs. Re-engagement gets candidates talking to you. We show which of them, and which new people, fit the job.",
+              a: "They do different jobs. Re-engagement gets candidates talking; we show who fits.",
             },
             {
               q: "Can HireRevolution match the candidates already in our ATS?",
-              a: "Yes. Connect your ATS, and they're matched alongside the candidates on HireRevolution.",
+              a: "Yes. Connect your ATS and they're matched too.",
             },
             {
               q: "Do you work with rediscovery and re-engagement vendors?",
-              a: "We'd like to. If you build one and want to talk about an integration, get in touch.",
+              a: "We'd like to. If you build one, get in touch.",
             },
           ]}
         />

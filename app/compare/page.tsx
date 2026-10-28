@@ -16,7 +16,7 @@ export default function CompareHubPage() {
       <CompareHero
         eyebrow="Compare"
         title="Where HireRevolution fits in your hiring stack"
-        subtitle="Not another system to switch to. The matching layer that shows which candidates can do the job, and why."
+        subtitle="Not another system to switch to. The matching layer that shows who can do the job, and why."
         image={{
           src: "/images/robots-woman-coworker-coffee.webp",
           alt: "Two HireRevolution robots at a laptop, under the HireRevolution.ai sign",
@@ -35,31 +35,31 @@ export default function CompareHubPage() {
               icon: "chat",
               tone: "violet",
               title: "AI interviews, both sides",
-              body: "Candidates and hiring managers, so the match uses both.",
+              body: "Candidates and hiring managers both.",
             },
             {
               icon: "sparkles",
               tone: "amber",
               title: "Skills never listed",
-              body: "Inferred from the work, with the reason shown.",
+              body: "Inferred, with the reason shown.",
             },
             {
               icon: "star",
               tone: "emerald",
               title: "Standout Signals",
-              body: "What sets each candidate apart, and the line it came from.",
+              body: "What sets each candidate apart.",
             },
             {
               icon: "chart",
               tone: "blue",
               title: "At-a-glance match chart",
-              body: "Required skills covered, with years in each.",
+              body: "Required skills covered, with years.",
             },
             {
               icon: "userPlus",
               tone: "sky",
               title: "Candidates you don't have",
-              body: "Job seekers on HireRevolution, plus a wider-market search.",
+              body: "Job seekers plus a wider-market search.",
             },
           ]}
         />
@@ -67,7 +67,7 @@ export default function CompareHubPage() {
 
       <StatsBand />
 
-      <Section title="See it work" subtitle="A walkthrough of a candidate analysis in the product.">
+      <Section title="See it work">
         <ProductVideo id={VIDEOS.analysis.id} title={VIDEOS.analysis.title} />
       </Section>
 

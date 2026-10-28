@@ -320,8 +320,7 @@ export function VideoInterviews() {
           )}
         </div>
         <p className="text-lg text-gray-600 mb-3">
-          Send candidates your questions. They record answers on HireRevolution, and your team reviews them with our AI
-          analysis.
+          Candidates record answers to your questions; your team reviews them with our AI analysis.
         </p>
         <p className="text-lg text-gray-900 font-semibold">No retakes, by design. You see each candidate&apos;s real first answer.</p>
       </div>
@@ -377,7 +376,7 @@ export function CompareCards({ current }: { current?: string }) {
 
 export function CompareCta() {
   return (
-    <CtaBand title="See it with your own jobs" subtitle="Book 20 minutes with our team, or try it free with one job description.">
+    <CtaBand title="See it with your own jobs">
       <Link href="/demo" className={buttonClass.onDark}>
         Book a demo
       </Link>
