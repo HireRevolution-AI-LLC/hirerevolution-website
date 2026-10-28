@@ -38,14 +38,12 @@ export const COMPARE_PAGES: ComparePage[] = [
 
 /**
  * ATSs we name. Policy (Gregg, 2026-10-28): an ATS is switched on when a
- * customer buys the connection, so we name every one with a planned path,
- * Merge or our own connector, even before a customer has tested it.
- * Checked 2026-10-28 against ai-hr-chatbot `docs/provider_integrations.md`,
- * the provider registry and Merge's catalog: all of these are Merge-supported.
- * Greenhouse, Lever, Workday, Teamtailor and Breezy are enabled in our Merge
- * account today; the rest are switched on at purchase.
- * Recruit CRM and Loxo are left out: Merge doesn't offer them and our own
- * connectors for them are still stubs, so there is no path to switch on.
+ * customer buys the connection, so we name every one with a planned path:
+ * our own connector first (no per-connection fee), Merge as the fallback.
+ * Native connectors for all of these were written 2026-10-28 in ai-hr-chatbot
+ * PRs #643-#646 (Greenhouse and JobDiva already had one), tested with mocked
+ * vendor APIs; none has run against a real customer yet. Recruit CRM and Loxo
+ * have no Merge fallback, so they depend on #644/#646 merging.
  * The first five lead the hero.
  */
 export const NAMED_ATS = [
@@ -54,6 +52,8 @@ export const NAMED_ATS = [
   "Greenhouse",
   "Lever",
   "Workday",
+  "Recruit CRM",
+  "Loxo",
   "iCIMS",
   "JobAdder",
   "Manatal",
