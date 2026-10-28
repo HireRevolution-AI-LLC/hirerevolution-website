@@ -1,5 +1,6 @@
-import { PageHero, Section } from "../../components/ui";
-import { CompareCta, CompareTable, Faq, OtherComparisons, ProfileStats, VideoInterviews } from "../components";
+import { Section } from "../../components/ui";
+import { CompareCards, CompareCta, CompareHero, CompareTable, Faq, ProductVideo, StatsBand, VideoInterviews } from "../components";
+import { VIDEOS } from "@/lib/content";
 import { pageMetadata } from "@/lib/metadata";
 
 const PATH = "/compare/ai-interview-tools";
@@ -14,86 +15,89 @@ export const metadata = pageMetadata({
 export default function CompareAiInterviewPage() {
   return (
     <main className="flex-1">
-      <PageHero
+      <CompareHero
+        eyebrow="HireRevolution and AI interview tools"
         title="An AI interview that builds a profile, not just a score"
-        subtitle="Many AI interview and screening tools assess the applicants to one job. HireRevolution interviews each candidate once, builds a full skills profile, and matches it against every job. It interviews the hiring manager too."
+        subtitle="We interview each candidate once and match them to every job. We interview the hiring manager too."
+        image={{ src: "/images/robot-reading.webp", alt: "The HireRevolution robot reading a resume" }}
       />
 
-      <Section
-        title="Six questions to ask any AI interview vendor"
-        subtitle="Ask them of every tool you're considering, including us. Here are our answers."
-      >
+      <Section title="Six questions to ask any AI interview vendor" subtitle="Ask every tool you're considering, us included.">
         <CompareTable
-          left="Question to ask"
-          right="HireRevolution's answer"
+          left="Ask any vendor"
+          right="Our answer"
           rows={[
             {
-              topic: "Who does the AI interview?",
-              left: "Does the AI talk only to candidates, or does it also learn what the hiring manager needs?",
-              right:
-                "Both. The hiring manager is interviewed about the role, the team and what success looks like, so the job is profiled as deeply as the candidate.",
+              topic: "Who gets interviewed?",
+              icon: "chat",
+              left: "Only candidates, or the hiring manager too?",
+              right: "Both. The job is profiled as deeply as the candidate.",
             },
             {
-              topic: "Is it tied to one job?",
-              left: "Does a candidate's interview count for one job, or for every job they could fit?",
-              right: "Every job. A candidate is interviewed once, and the profile is matched against every job on HireRevolution.",
+              topic: "Tied to one job?",
+              icon: "briefcase",
+              left: "Does an interview count for one job, or every job?",
+              right: "Every job. One interview, matched against every job on HireRevolution.",
             },
             {
-              topic: "What do you get afterwards?",
-              left: "A score, a recording, a summary, or a full profile?",
-              right:
-                "A full profile: about 100 skills with years in each, skills the candidate never listed, and Standout Signals.",
+              topic: "What you get",
+              icon: "profile",
+              left: "A score, a recording, or a full profile?",
+              right: "A full profile: about 100 skills with years, skills never listed, and Standout Signals.",
             },
             {
               topic: "Can you see why?",
-              left: "Can you trace a score back to the evidence behind it?",
-              right:
-                "Yes. Each skill points to the line of work history it came from, and the match chart shows which required skills a candidate covers.",
+              icon: "eye",
+              left: "Can you trace a score back to its evidence?",
+              right: "Yes. Each skill points to its line of work history.",
             },
             {
               topic: "Does wording matter?",
-              left: "Does a candidate lose out for describing a skill differently from your job description?",
-              right: "No. More than 44,000 ways of wording a skill resolve to about 13,200 skills.",
+              icon: "sparkles",
+              left: "Does describing a skill differently cost a candidate?",
+              right: "No. 44,000+ ways of wording a skill resolve to about 13,200 skills.",
             },
             {
-              topic: "What's in it for the candidate?",
-              left: "Does the candidate get anything back for their time?",
-              right:
-                "Yes. It's free for them, and their profile keeps working: it's matched to new jobs as they open, without another interview.",
+              topic: "For the candidate",
+              icon: "users",
+              left: "Do candidates get anything for their time?",
+              right: "Yes. It's free, and their profile keeps matching new jobs.",
             },
           ]}
         />
       </Section>
 
-      <Section tone="gray" title="Then hear it in their own words">
+      <Section tone="tint" title="Then hear it in their own words">
         <VideoInterviews />
       </Section>
 
-      <Section title="The depth behind every match">
-        <ProfileStats />
+      <StatsBand />
+
+      <Section title="See it work" subtitle="A walkthrough of a candidate analysis in the product.">
+        <ProductVideo id={VIDEOS.analysis.id} title={VIDEOS.analysis.title} />
       </Section>
 
-      <Section tone="gray" title="Questions about AI interviews">
+      <Section tone="tint" title="Questions about AI interviews">
         <Faq
           items={[
             {
               q: "Can I use HireRevolution alongside an AI interview tool I already have?",
-              a: "Yes. They do different jobs. A screening tool assesses the people who applied; HireRevolution tells you which candidates fit the job, including people who haven't applied yet.",
+              a: "Yes. A screening tool assesses who applied. We show who fits, including people who haven't applied.",
             },
             {
               q: "Why interview the hiring manager?",
-              a: "Job descriptions are often copied from a template or the last hire, and they leave out what only the hiring manager knows. Matching against a thin job description gives you a thin match.",
+              a: "Job descriptions leave out what only the hiring manager knows. A thin job description gives a thin match.",
             },
             {
               q: "Does the AI make the hiring decision?",
-              a: "No. It ranks candidates and shows the evidence. Your team decides who to talk to and who to hire.",
+              a: "No. It ranks candidates and shows the evidence. Your team decides.",
             },
           ]}
         />
       </Section>
 
       <Section title="More comparisons">
-        <OtherComparisons current={PATH} />
+        <CompareCards current={PATH} />
       </Section>
 
       <CompareCta />

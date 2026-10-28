@@ -1,7 +1,9 @@
 import Link from "next/link";
-import { PageHero, Section } from "../../components/ui";
-import { CompareCta, CompareTable, Faq, OtherComparisons, ProfileStats } from "../components";
+import { Section } from "../../components/ui";
+import { CompareCards, CompareCta, CompareHero, CompareTable, Faq, ProductVideo, StatsBand } from "../components";
+import AtsLayerDiagram from "./AtsLayerDiagram";
 import { NAMED_ATS } from "@/lib/compare";
+import { VIDEOS } from "@/lib/content";
 import { pageMetadata } from "@/lib/metadata";
 
 const PATH = "/compare/ats";
@@ -14,89 +16,68 @@ export const metadata = pageMetadata({
   description: `HireRevolution doesn't replace your applicant tracking system. It connects to ${atsShort}, and adds skills evidence to every candidate.`,
 });
 
-const STEPS = [
-  {
-    title: "Connect your ATS",
-    body: "Connect it from the app. Your open jobs and your candidates come across, and nothing in your ATS changes.",
-  },
-  {
-    title: "We match every job",
-    body: "Each job is matched against your own candidates and against job seekers on HireRevolution, and ranked by the skills each person has shown.",
-  },
-  {
-    title: "Results go back where you work",
-    body: "Our match analysis can be written back to the candidate's record in the ATS you already use, so your recruiters see it where they work.",
-  },
-];
-
 export default function CompareAtsPage() {
   return (
     <main className="flex-1">
-      <PageHero
+      <CompareHero
+        eyebrow="HireRevolution and your ATS"
         title="Keep your ATS. Add the evidence."
-        subtitle={`HireRevolution isn't an applicant tracking system, and it doesn't ask you to replace one. It works with ${atsShort}, and shows you which candidates can do the job, and why.`}
+        subtitle={`No rip-and-replace. HireRevolution works with ${atsShort}, and shows which candidates can do the job.`}
+        visual={<AtsLayerDiagram />}
       />
 
-      <Section title="Two jobs, done side by side" subtitle="Your ATS stays your system of record. HireRevolution does the matching.">
+      <Section title="Two jobs, side by side" subtitle="Your ATS stays the system of record. We do the matching.">
         <CompareTable
-          left="Stays in your ATS"
+          left="Your ATS keeps"
           right="HireRevolution adds"
           rows={[
             {
               topic: "The job",
-              left: "Your jobs, pipeline stages, submissions and records, exactly as you run them today.",
-              right:
-                "A job profile built by interviewing the hiring manager about the role, the team and what success looks like.",
+              icon: "briefcase",
+              left: "Jobs, stages and records, as you run them today.",
+              right: "A job profile from interviewing the hiring manager.",
             },
             {
               topic: "Candidates",
-              left: "Everyone who applied to you or was added to your database.",
-              right:
-                "Your candidates, job seekers who joined HireRevolution, and people we find across the wider market who fit the job.",
+              icon: "users",
+              left: "Everyone who applied or is in your database.",
+              right: "Plus job seekers on HireRevolution and people we find across the wider market.",
             },
             {
-              topic: "The candidate's profile",
+              topic: "The profile",
+              icon: "profile",
               left: "The record and resume your team keeps.",
-              right:
-                "A profile built by an AI interview: about 100 skills with years in each, skills the candidate never listed, and Standout Signals.",
+              right: "About 100 skills with years, skills never listed, and Standout Signals.",
             },
             {
-              topic: "Deciding who to call",
+              topic: "Who to call",
+              icon: "chart",
               left: "Your team's process and judgment.",
-              right:
-                "A ranked shortlist and a match chart that shows, at a glance, which required skills each person covers. Share the shortlist with colleagues in one link; they don't need an account.",
+              right: "A ranked shortlist and at-a-glance match chart, shared in one link.",
             },
             {
-              topic: "Where the results live",
+              topic: "Where results live",
+              icon: "writeBack",
               left: "In your ATS.",
-              right: "Our match analysis, written back to the candidate's record in the ATS you already use.",
+              right: "Our match analysis, written back to the candidate's record.",
             },
           ]}
         />
       </Section>
 
-      <Section tone="gray" title="How it works with your ATS">
-        <ol className="grid md:grid-cols-3 gap-8">
-          {STEPS.map((step, i) => (
-            <li key={step.title} className="bg-white border border-gray-200 rounded-xl p-6">
-              <p className="text-blue-700 font-bold mb-2">Step {i + 1}</p>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">{step.title}</h3>
-              <p className="text-gray-600">{step.body}</p>
-            </li>
-          ))}
-        </ol>
+      <StatsBand />
+
+      {/* Not VIDEOS.stack: its integrations screen shows other vendors' logos. */}
+      <Section tone="tint" title="See it work" subtitle="Matched candidates for a job, in four clicks.">
+        <ProductVideo id={VIDEOS.fourClicks.id} title={VIDEOS.fourClicks.title} />
       </Section>
 
-      <Section title="The depth behind every match">
-        <ProfileStats />
-      </Section>
-
-      <Section tone="gray" title="Questions about your ATS">
+      <Section title="Questions about your ATS">
         <Faq
           items={[
             {
               q: "Do I have to replace my ATS?",
-              a: "No. HireRevolution works alongside it. Your jobs, candidates and records stay where they are.",
+              a: "No. Your jobs, candidates and records stay where they are.",
             },
             {
               q: "Which applicant tracking systems do you work with?",
@@ -112,11 +93,11 @@ export default function CompareAtsPage() {
             },
             {
               q: "My ATS already has AI matching. What does this add?",
-              a: "Many ATSs now include AI tools, and they work from the records in your database. HireRevolution adds two things a typical ATS record doesn't hold: a candidate profile built by interviewing the candidate, and a job profile built by interviewing the hiring manager. It also brings in matching candidates who aren't in your database yet.",
+              a: "Profiles built by interviewing the candidate and the hiring manager, which a typical ATS record doesn't hold. And matching candidates who aren't in your database yet.",
             },
             {
-              q: "Will my recruiters have to learn a new workflow?",
-              a: "Very little. Matching starts as soon as a job comes across, and our match analysis can be written back to the records your recruiters already use.",
+              q: "Will my recruiters need a new workflow?",
+              a: "Very little. Matching starts when a job comes across, and results can be written back to the records they already use.",
             },
             {
               q: "Which plans include an ATS connection?",
@@ -125,8 +106,8 @@ export default function CompareAtsPage() {
                   See{" "}
                   <Link href="/pricing" className="text-blue-700 font-semibold hover:text-blue-800">
                     pricing
-                  </Link>{" "}
-                  for what each plan includes.
+                  </Link>
+                  .
                 </>
               ),
             },
@@ -134,8 +115,8 @@ export default function CompareAtsPage() {
         />
       </Section>
 
-      <Section title="More comparisons">
-        <OtherComparisons current={PATH} />
+      <Section tone="gray" title="More comparisons">
+        <CompareCards current={PATH} />
       </Section>
 
       <CompareCta />

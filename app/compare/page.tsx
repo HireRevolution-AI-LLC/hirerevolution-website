@@ -1,7 +1,6 @@
-import Link from "next/link";
-import { CheckList, PageHero, Section } from "../components/ui";
-import { CompareCta, ProfileStats } from "./components";
-import { COMPARE_PAGES } from "@/lib/compare";
+import { Section } from "../components/ui";
+import { CompareCards, CompareCta, CompareHero, IconGrid, ProductVideo, StatsBand } from "./components";
+import { VIDEOS } from "@/lib/content";
 import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata({
@@ -14,57 +13,62 @@ export const metadata = pageMetadata({
 export default function CompareHubPage() {
   return (
     <main className="flex-1">
-      <PageHero
+      <CompareHero
+        eyebrow="Compare"
         title="Where HireRevolution fits in your hiring stack"
-        subtitle="HireRevolution isn't another system to switch to. It's the matching layer that shows you which candidates can do the job, and why, inside the tools you already run."
+        subtitle="Not another system to switch to. The matching layer that shows which candidates can do the job, and why."
+        image={{
+          src: "/images/robots-woman-coworker-coffee.webp",
+          alt: "Two HireRevolution robots at a laptop, under the HireRevolution.ai sign",
+        }}
       />
 
       <Section title="Compare by category" subtitle="Pick the kind of tool you're weighing us against.">
-        <div className="grid md:grid-cols-3 gap-8">
-          {COMPARE_PAGES.map((p) => (
-            <Link
-              key={p.path}
-              href={p.path}
-              className="block bg-white border border-gray-200 rounded-xl p-6 hover:shadow-lg transition"
-            >
-              <h2 className="text-xl font-semibold text-gray-900 mb-2">HireRevolution and {p.title} →</h2>
-              <p className="text-gray-600">{p.summary}</p>
-            </Link>
-          ))}
-        </div>
+        <CompareCards />
       </Section>
 
-      <Section tone="gray" title="What HireRevolution adds to any stack">
-        <div className="max-w-3xl mx-auto">
-          <CheckList
-            items={[
-              <>
-                <strong>AI interviews on both sides.</strong> Candidates are interviewed to build a full profile, and hiring
-                managers are interviewed to build the job. The match uses both, not a resume against a job description.
-              </>,
-              <>
-                <strong>Skills a candidate never listed.</strong> Our AI infers skills from the work a resume describes, and
-                shows why each one was inferred.
-              </>,
-              <>
-                <strong>Standout Signals.</strong> What makes each candidate stand out, with the role, company, dates and the
-                line it came from.
-              </>,
-              <>
-                <strong>A match chart you can read at a glance.</strong> Which required skills a candidate covers, with years
-                in each, so nobody has to read the resume to see why someone ranked where they did.
-              </>,
-              <>
-                <strong>Candidates you don&apos;t have yet.</strong> Job seekers join HireRevolution free, and we search the
-                wider market for people who fit each job, so you see more than your own database.
-              </>,
-            ]}
-          />
-        </div>
+      <Section tone="tint" title="What we add to any stack" subtitle="It works alongside the tools you already run.">
+        <IconGrid
+          columns={5}
+          items={[
+            {
+              icon: "chat",
+              tone: "violet",
+              title: "AI interviews, both sides",
+              body: "Candidates and hiring managers, so the match uses both.",
+            },
+            {
+              icon: "sparkles",
+              tone: "amber",
+              title: "Skills never listed",
+              body: "Inferred from the work, with the reason shown.",
+            },
+            {
+              icon: "star",
+              tone: "emerald",
+              title: "Standout Signals",
+              body: "What sets each candidate apart, and the line it came from.",
+            },
+            {
+              icon: "chart",
+              tone: "blue",
+              title: "At-a-glance match chart",
+              body: "Required skills covered, with years in each.",
+            },
+            {
+              icon: "userPlus",
+              tone: "sky",
+              title: "Candidates you don't have",
+              body: "Job seekers on HireRevolution, plus a wider-market search.",
+            },
+          ]}
+        />
       </Section>
 
-      <Section title="The depth behind every match">
-        <ProfileStats />
+      <StatsBand />
+
+      <Section title="See it work" subtitle="A walkthrough of a candidate analysis in the product.">
+        <ProductVideo id={VIDEOS.analysis.id} title={VIDEOS.analysis.title} />
       </Section>
 
       <CompareCta />

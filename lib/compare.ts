@@ -20,19 +20,19 @@ export const COMPARE_PAGES: ComparePage[] = [
     path: "/compare/ats",
     title: "your ATS",
     summary:
-      "Keep the applicant tracking system you run today. HireRevolution connects to it and adds skills evidence to every candidate.",
+      "Keep the ATS you run. We connect to it and add skills evidence to every candidate.",
   },
   {
     path: "/compare/ai-interview-tools",
     title: "AI interview and screening tools",
     summary:
-      "Many AI interview tools assess the applicants to one job. Ours builds a profile that is matched against every job, and it interviews the hiring manager too.",
+      "Many tools assess the applicants to one job. Ours builds a profile matched to every job, and interviews the hiring manager too.",
   },
   {
     path: "/compare/talent-rediscovery",
     title: "talent rediscovery and re-engagement tools",
     summary:
-      "Re-engagement tools bring past candidates back. HireRevolution shows which of them fit the job in front of you, and why.",
+      "Re-engagement brings past candidates back. We show which of them fit the job, and why.",
   },
 ];
 
@@ -74,17 +74,17 @@ export const PROFILE_STATS: { figure: string; label: string; detail: string }[] 
   {
     figure: "~100",
     label: "skills per candidate profile",
-    detail: "Each one carries years of experience and the line of work history it came from.",
+    detail: "Each with years of experience and the line it came from.",
   },
   {
     figure: "1 in 7",
     label: "skills the candidate never listed",
-    detail: "Inferred from the work a resume describes. Each shows the reason it was inferred.",
+    detail: "Inferred from the work a resume describes, with the reason shown.",
   },
   {
     figure: "44,000+",
     label: "ways of wording a skill",
-    detail: "Resolve to about 13,200 skills, so a different term on a resume doesn't cost a candidate the match.",
+    detail: "Resolve to about 13,200 skills, so wording never costs a match.",
   },
 ];
 

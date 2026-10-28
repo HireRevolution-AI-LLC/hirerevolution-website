@@ -1,5 +1,6 @@
-import { PageHero, Section } from "../../components/ui";
-import { CompareCta, CompareTable, Faq, OtherComparisons, ProfileStats } from "../components";
+import { Section } from "../../components/ui";
+import { CompareCards, CompareCta, CompareHero, CompareTable, Faq, ProductVideo, StatsBand } from "../components";
+import { VIDEOS } from "@/lib/content";
 import { pageMetadata } from "@/lib/metadata";
 
 const PATH = "/compare/talent-rediscovery";
@@ -14,45 +15,50 @@ export const metadata = pageMetadata({
 export default function CompareRediscoveryPage() {
   return (
     <main className="flex-1">
-      <PageHero
+      <CompareHero
+        eyebrow="HireRevolution and rediscovery tools"
         title="Bring candidates back. Then know which ones fit."
-        subtitle="Talent rediscovery and re-engagement tools help you get more from the candidates you already have. HireRevolution works next to them: it shows which candidates fit the job in front of you, and adds people who aren't in your database yet."
+        subtitle="Rediscovery tools re-engage your past candidates. We show which of them fit the job, and add people you don't have yet."
+        image={{ src: "/images/robots-crowd.webp", alt: "A crowd of robots, one standing out" }}
       />
 
-      <Section title="Two jobs that work together" subtitle="One brings candidates back to you. The other shows who fits.">
+      <Section title="Two jobs that work together" subtitle="One brings candidates back. The other shows who fits.">
         <CompareTable
-          left="Rediscovery and re-engagement tools"
+          left="Rediscovery tools"
           right="HireRevolution"
           rows={[
             {
               topic: "Focus",
-              left: "Getting past applicants and database candidates to respond again.",
-              right: "Showing which candidates fit each job, with the evidence.",
+              icon: "target",
+              left: "Getting past candidates to respond again.",
+              right: "Showing who fits each job, with the evidence.",
             },
             {
               topic: "Candidates",
-              left: "The candidates already in your ATS and talent pools.",
-              right:
-                "Your candidates, job seekers who joined HireRevolution, and people we find across the wider market who fit the job.",
+              icon: "users",
+              left: "Those already in your ATS and talent pools.",
+              right: "Yours, plus job seekers on HireRevolution and people we find across the wider market.",
             },
             {
-              topic: "What a recruiter sees",
-              left: "Who has engaged, responded or updated their details.",
-              right:
-                "A ranked shortlist, a match chart of the required skills each person covers, and Standout Signals with the line each came from.",
+              topic: "What you see",
+              icon: "chart",
+              left: "Who engaged, responded or updated their details.",
+              right: "A ranked shortlist, a match chart and Standout Signals.",
             },
             {
               topic: "Old records",
-              left: "Brings stale records back to life by reaching out.",
-              right:
-                "Reads the work a resume describes, including skills the candidate never listed, so an old record can still match a new kind of job.",
+              icon: "refresh",
+              left: "Revived by reaching out.",
+              right: "Read for skills never listed, so they can match new kinds of jobs.",
             },
           ]}
         />
       </Section>
 
-      <Section tone="gray" title="The depth behind every match">
-        <ProfileStats />
+      <StatsBand />
+
+      <Section tone="tint" title="See it work" subtitle="Find the candidates you'd otherwise miss.">
+        <ProductVideo id={VIDEOS.jd.id} title={VIDEOS.jd.title} />
       </Section>
 
       <Section title="Questions about rediscovery">
@@ -60,11 +66,11 @@ export default function CompareRediscoveryPage() {
           items={[
             {
               q: "We already use a re-engagement tool. Do we need HireRevolution?",
-              a: "They do different jobs. Re-engagement gets candidates talking to you again. HireRevolution tells you which of them, and which new candidates, fit the job you're filling.",
+              a: "They do different jobs. Re-engagement gets candidates talking to you. We show which of them, and which new people, fit the job.",
             },
             {
               q: "Can HireRevolution match the candidates already in our ATS?",
-              a: "Yes. Connect your ATS, and your candidates are matched against your open jobs alongside the candidates on HireRevolution.",
+              a: "Yes. Connect your ATS, and they're matched alongside the candidates on HireRevolution.",
             },
             {
               q: "Do you work with rediscovery and re-engagement vendors?",
@@ -75,7 +81,7 @@ export default function CompareRediscoveryPage() {
       </Section>
 
       <Section tone="gray" title="More comparisons">
-        <OtherComparisons current={PATH} />
+        <CompareCards current={PATH} />
       </Section>
 
       <CompareCta />
