@@ -37,15 +37,30 @@ export const COMPARE_PAGES: ComparePage[] = [
 ];
 
 /**
- * ATSs a customer can connect today. Checked 2026-10-28: each is in the app's
- * provider registry (ai-hr-chatbot `integration_endpoints.py`) and enabled in
- * our Merge account (GET /api/organizations/integrations, prod and dev keys).
- * JobDiva, Bullhorn, iCIMS, JobAdder, Manatal, Zoho Recruit, Loxo and Recruit
- * CRM are in the registry but NOT enabled in Merge, and the API-key path for
- * JobDiva, Manatal and Recruit CRM saves read_mode "merge" with no linked
- * account, so a prod sync is refused (409). Add them only once that's fixed.
+ * ATSs we name. Policy (Gregg, 2026-10-28): an ATS is switched on when a
+ * customer buys the connection, so we name every one with a planned path,
+ * Merge or our own connector, even before a customer has tested it.
+ * Checked 2026-10-28 against ai-hr-chatbot `docs/provider_integrations.md`,
+ * the provider registry and Merge's catalog: all of these are Merge-supported.
+ * Greenhouse, Lever, Workday, Teamtailor and Breezy are enabled in our Merge
+ * account today; the rest are switched on at purchase.
+ * Recruit CRM and Loxo are left out: Merge doesn't offer them and our own
+ * connectors for them are still stubs, so there is no path to switch on.
+ * The first five lead the hero.
  */
-export const NAMED_ATS = ["Greenhouse", "Lever", "Workday", "Teamtailor", "Breezy HR"];
+export const NAMED_ATS = [
+  "JobDiva",
+  "Bullhorn",
+  "Greenhouse",
+  "Lever",
+  "Workday",
+  "iCIMS",
+  "JobAdder",
+  "Manatal",
+  "Zoho Recruit",
+  "Teamtailor",
+  "Breezy HR",
+];
 
 /**
  * Measured on production 2026-10-28 across the 259 candidates with a skills
