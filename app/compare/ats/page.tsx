@@ -6,12 +6,11 @@ import { pageMetadata } from "@/lib/metadata";
 
 const PATH = "/compare/ats";
 const atsList = `${NAMED_ATS.slice(0, -1).join(", ")} and ${NAMED_ATS.at(-1)}`;
-const atsShort = `${NAMED_ATS.slice(0, 5).join(", ")} and more`;
 
 export const metadata = pageMetadata({
   path: PATH,
   title: "HireRevolution and Your ATS | HireRevolution AI",
-  description: `HireRevolution doesn't replace your applicant tracking system. It connects to ${atsShort}, and adds skills evidence to every candidate.`,
+  description: `HireRevolution doesn't replace your applicant tracking system. It connects to ${atsList}, and adds skills evidence to every candidate.`,
 });
 
 const STEPS = [
@@ -34,7 +33,7 @@ export default function CompareAtsPage() {
     <main className="flex-1">
       <PageHero
         title="Keep your ATS. Add the evidence."
-        subtitle={`HireRevolution isn't an applicant tracking system, and it doesn't ask you to replace one. It works with ${atsShort}, and shows you which candidates can do the job, and why.`}
+        subtitle={`HireRevolution isn't an applicant tracking system, and it doesn't ask you to replace one. It works with ${atsList}, and shows you which candidates can do the job, and why.`}
       />
 
       <Section title="Two jobs, done side by side" subtitle="Your ATS stays your system of record. HireRevolution does the matching.">

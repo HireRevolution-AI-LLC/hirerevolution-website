@@ -37,25 +37,15 @@ export const COMPARE_PAGES: ComparePage[] = [
 ];
 
 /**
- * ATSs a customer can connect today: each is in the app's provider registry
- * (ai-hr-chatbot `integration_endpoints.py`, connect_mode "merge") and in
- * Merge's public ATS catalog. Recruit CRM and Loxo are in the registry too but
- * not in Merge's catalog, and their native connectors are stubs, so they wait
- * until a connection is confirmed. The first five lead the hero.
+ * ATSs a customer can connect today. Checked 2026-10-28: each is in the app's
+ * provider registry (ai-hr-chatbot `integration_endpoints.py`) and enabled in
+ * our Merge account (GET /api/organizations/integrations, prod and dev keys).
+ * JobDiva, Bullhorn, iCIMS, JobAdder, Manatal, Zoho Recruit, Loxo and Recruit
+ * CRM are in the registry but NOT enabled in Merge, and the API-key path for
+ * JobDiva, Manatal and Recruit CRM saves read_mode "merge" with no linked
+ * account, so a prod sync is refused (409). Add them only once that's fixed.
  */
-export const NAMED_ATS = [
-  "JobDiva",
-  "Bullhorn",
-  "Lever",
-  "Greenhouse",
-  "Workday",
-  "iCIMS",
-  "JobAdder",
-  "Manatal",
-  "Teamtailor",
-  "Zoho Recruit",
-  "Breezy HR",
-];
+export const NAMED_ATS = ["Greenhouse", "Lever", "Workday", "Teamtailor", "Breezy HR"];
 
 /**
  * Measured on production 2026-10-28 across the 259 candidates with a skills
