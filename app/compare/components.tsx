@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { CtaBand, buttonClass } from "../components/ui";
-import { COMPARE_PAGES, PROFILE_STATS, PROFILE_STATS_AS_OF } from "@/lib/compare";
+import { COMPARE_PAGES, PROFILE_STATS, PROFILE_STATS_AS_OF, VIDEO_INTERVIEWS_LIVE } from "@/lib/compare";
 
 /** Building blocks shared by the /compare pages. */
 
@@ -59,6 +59,30 @@ export function ProfileStats() {
       </div>
       <p className="text-sm text-gray-500 text-center mt-6">
         Measured across candidate profiles on HireRevolution, {PROFILE_STATS_AS_OF}.
+      </p>
+    </div>
+  );
+}
+
+/** On-demand video interviews; badged until VIDEO_INTERVIEWS_LIVE is switched on. */
+export function VideoInterviews() {
+  return (
+    <div className="max-w-3xl mx-auto bg-white border border-gray-200 rounded-xl p-8">
+      <div className="flex justify-between items-start gap-3 mb-4">
+        <h3 className="text-2xl font-semibold text-gray-900">On-demand video interviews</h3>
+        {!VIDEO_INTERVIEWS_LIVE && (
+          <span className="text-xs font-semibold px-3 py-1 rounded-full bg-amber-100 text-amber-800 whitespace-nowrap">
+            Coming in November
+          </span>
+        )}
+      </div>
+      <p className="text-lg text-gray-600 mb-4">
+        Send candidates your interview questions. They record their answers on HireRevolution, and your team reviews
+        them alongside our AI analysis.
+      </p>
+      <p className="text-lg text-gray-600">
+        <strong className="text-gray-900">No retakes, by design.</strong> You see each candidate&apos;s real first
+        answer.
       </p>
     </div>
   );

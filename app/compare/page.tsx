@@ -55,8 +55,8 @@ export default function CompareHubPage() {
                 in each, so nobody has to read the resume to see why someone ranked where they did.
               </>,
               <>
-                <strong>Candidates you don&apos;t have yet.</strong> Job seekers join HireRevolution free, so every job is
-                matched against a growing pool as well as your own candidates.
+                <strong>Candidates you don&apos;t have yet.</strong> Job seekers join HireRevolution free, and we search the
+                wider market for people who fit each job, so you see more than your own database.
               </>,
             ]}
           />

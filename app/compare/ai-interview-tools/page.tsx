@@ -1,5 +1,5 @@
 import { PageHero, Section } from "../../components/ui";
-import { CompareCta, CompareTable, Faq, OtherComparisons, ProfileStats } from "../components";
+import { CompareCta, CompareTable, Faq, OtherComparisons, ProfileStats, VideoInterviews } from "../components";
 import { pageMetadata } from "@/lib/metadata";
 
 const PATH = "/compare/ai-interview-tools";
@@ -65,11 +65,15 @@ export default function CompareAiInterviewPage() {
         />
       </Section>
 
-      <Section tone="gray" title="The depth behind every match">
+      <Section tone="gray" title="Then hear it in their own words">
+        <VideoInterviews />
+      </Section>
+
+      <Section title="The depth behind every match">
         <ProfileStats />
       </Section>
 
-      <Section title="Questions about AI interviews">
+      <Section tone="gray" title="Questions about AI interviews">
         <Faq
           items={[
             {
@@ -88,7 +92,7 @@ export default function CompareAiInterviewPage() {
         />
       </Section>
 
-      <Section tone="gray" title="More comparisons">
+      <Section title="More comparisons">
         <OtherComparisons current={PATH} />
       </Section>
 

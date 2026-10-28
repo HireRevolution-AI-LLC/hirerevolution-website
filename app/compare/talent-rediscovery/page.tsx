@@ -32,7 +32,8 @@ export default function CompareRediscoveryPage() {
             {
               topic: "Candidates",
               left: "The candidates already in your ATS and talent pools.",
-              right: "Your candidates, plus job seekers who joined HireRevolution and match the job.",
+              right:
+                "Your candidates, job seekers who joined HireRevolution, and people we find across the wider market who fit the job.",
             },
             {
               topic: "What a recruiter sees",

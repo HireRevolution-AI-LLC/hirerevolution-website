@@ -63,3 +63,11 @@ export const PROFILE_STATS: { figure: string; label: string; detail: string }[] 
     detail: "Resolve to about 12,600 skills, so a different term on a resume doesn't cost a candidate the match.",
   },
 ];
+
+/**
+ * On-demand video interviews launch about 2026-11-04. Until then the section
+ * carries a "Coming in November" badge; flip this to true at launch.
+ * No retakes is the selling point: never add copy that shows or implies one,
+ * and describe no other mechanics (timers, limits) without checking the app.
+ */
+export const VIDEO_INTERVIEWS_LIVE = false;

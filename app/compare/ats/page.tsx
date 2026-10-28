@@ -24,7 +24,7 @@ const STEPS = [
   },
   {
     title: "Results go back where you work",
-    body: "Applications, match links and match notes can be written back to the candidate's record in your ATS. It's off until you turn it on.",
+    body: "Our match analysis can be written back to the candidate's record in the ATS you already use, so your recruiters see it where they work.",
   },
 ];
 
@@ -50,7 +50,8 @@ export default function CompareAtsPage() {
             {
               topic: "Candidates",
               left: "Everyone who applied to you or was added to your database.",
-              right: "Your candidates, plus job seekers who joined HireRevolution and match the job.",
+              right:
+                "Your candidates, job seekers who joined HireRevolution, and people we find across the wider market who fit the job.",
             },
             {
               topic: "The candidate's profile",
@@ -62,12 +63,12 @@ export default function CompareAtsPage() {
               topic: "Deciding who to call",
               left: "Your team's process and judgment.",
               right:
-                "A ranked shortlist and a match chart that shows, at a glance, which required skills each person covers.",
+                "A ranked shortlist and a match chart that shows, at a glance, which required skills each person covers. Share the shortlist with colleagues in one link; they don't need an account.",
             },
             {
               topic: "Where the results live",
               left: "In your ATS.",
-              right: "Match notes and links written back to the candidate's record in your ATS, when you turn it on.",
+              right: "Our match analysis, written back to the candidate's record in the ATS you already use.",
             },
           ]}
         />
@@ -114,7 +115,7 @@ export default function CompareAtsPage() {
             },
             {
               q: "Will my recruiters have to learn a new workflow?",
-              a: "Very little. Matching starts as soon as a job comes across, and with write-back turned on, match notes show up on the records your recruiters already use.",
+              a: "Very little. Matching starts as soon as a job comes across, and our match analysis can be written back to the records your recruiters already use.",
             },
             {
               q: "Which plans include an ATS connection?",
