@@ -289,7 +289,7 @@ export function StatsBand() {
           ))}
         </div>
         <p className="text-sm text-blue-200 text-center mt-8">
-          Measured across candidate profiles on HireRevolution, {PROFILE_STATS_AS_OF}.
+          Measured across candidate profiles on HireRevolution AI, {PROFILE_STATS_AS_OF}.
         </p>
       </div>
     </section>
@@ -365,7 +365,7 @@ export function CompareCards({ current }: { current?: string }) {
           className="group block bg-white rounded-2xl p-6 shadow-sm ring-1 ring-[#2758A1]/10 border-t-4 border-[#2758A1] hover:shadow-lg transition"
         >
           <IconBadge name={PAGE_ICONS[p.path].icon} tone={PAGE_ICONS[p.path].tone} />
-          <h3 className="text-xl font-semibold text-gray-900 mt-4 mb-2">HireRevolution and {p.title}</h3>
+          <h3 className="text-xl font-semibold text-gray-900 mt-4 mb-2">HireRevolution AI and {p.title}</h3>
           <p className="text-gray-600 mb-4">{p.summary}</p>
           <span className="text-[#2758A1] font-semibold group-hover:underline">Compare →</span>
         </Link>

@@ -5,9 +5,9 @@ import { pageMetadata } from "@/lib/metadata";
 
 export const metadata = pageMetadata({
   path: "/compare",
-  title: "How HireRevolution Compares | HireRevolution AI",
+  title: "How HireRevolution AI Compares | HireRevolution AI",
   description:
-    "Where HireRevolution fits next to your ATS, AI interview tools and talent rediscovery tools. Most of the time it works alongside them.",
+    "Where HireRevolution AI fits next to your ATS, AI interview tools and talent rediscovery tools. Most of the time it works alongside them.",
 });
 
 export default function CompareHubPage() {
@@ -15,11 +15,11 @@ export default function CompareHubPage() {
     <main className="flex-1">
       <CompareHero
         eyebrow="Compare"
-        title="Where HireRevolution fits in your hiring stack"
+        title="Where HireRevolution AI fits in your hiring stack"
         subtitle="Not another system to switch to. The matching layer that shows who can do the job, and why."
         image={{
           src: "/images/robots-woman-coworker-coffee.webp",
-          alt: "Two HireRevolution robots at a laptop, under the HireRevolution.ai sign",
+          alt: "Two HireRevolution AI robots at a laptop, under the HireRevolution.ai sign",
         }}
       />
 

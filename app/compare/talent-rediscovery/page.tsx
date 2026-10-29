@@ -7,16 +7,16 @@ const PATH = "/compare/talent-rediscovery";
 
 export const metadata = pageMetadata({
   path: PATH,
-  title: "HireRevolution and Talent Rediscovery Tools | HireRevolution AI",
+  title: "HireRevolution AI and Talent Rediscovery Tools | HireRevolution AI",
   description:
-    "Re-engagement and talent rediscovery tools bring past candidates back. HireRevolution shows which of them fit the job, and why, and adds candidates you don't have yet.",
+    "Re-engagement and talent rediscovery tools bring past candidates back. HireRevolution AI shows which of them fit the job, and why, and adds candidates you don't have yet.",
 });
 
 export default function CompareRediscoveryPage() {
   return (
     <main className="flex-1">
       <CompareHero
-        eyebrow="HireRevolution and rediscovery tools"
+        eyebrow="HireRevolution AI and rediscovery tools"
         title="Bring candidates back. Then know which ones fit."
         subtitle="Rediscovery tools re-engage past candidates. We show who fits, and add people you don't have."
         image={{ src: "/images/robots-crowd.webp", alt: "A crowd of robots, one standing out" }}
@@ -25,7 +25,7 @@ export default function CompareRediscoveryPage() {
       <Section title="Two jobs that work together" subtitle="One brings candidates back. The other shows who fits.">
         <CompareTable
           left="Rediscovery tools"
-          right="HireRevolution"
+          right="HireRevolution AI"
           rows={[
             {
               topic: "Focus",
@@ -65,11 +65,11 @@ export default function CompareRediscoveryPage() {
         <Faq
           items={[
             {
-              q: "We already use a re-engagement tool. Do we need HireRevolution?",
+              q: "We already use a re-engagement tool. Do we need HireRevolution AI?",
               a: "They do different jobs. Re-engagement gets candidates talking; we show who fits.",
             },
             {
-              q: "Can HireRevolution match the candidates already in our ATS?",
+              q: "Can HireRevolution AI match the candidates already in our ATS?",
               a: "Yes. Connect your ATS and they're matched too.",
             },
             {

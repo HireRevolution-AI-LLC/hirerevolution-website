@@ -7,19 +7,19 @@ const PATH = "/compare/ai-interview-tools";
 
 export const metadata = pageMetadata({
   path: PATH,
-  title: "HireRevolution and AI Interview Tools | HireRevolution AI",
+  title: "HireRevolution AI and AI Interview Tools | HireRevolution AI",
   description:
-    "HireRevolution's AI interviews candidates and hiring managers, then matches the two profiles. Six questions to ask any AI interview or screening vendor.",
+    "HireRevolution AI's AI interviews candidates and hiring managers, then matches the two profiles. Six questions to ask any AI interview or screening vendor.",
 });
 
 export default function CompareAiInterviewPage() {
   return (
     <main className="flex-1">
       <CompareHero
-        eyebrow="HireRevolution and AI interview tools"
+        eyebrow="HireRevolution AI and AI interview tools"
         title="An AI interview that builds a profile, not just a score"
         subtitle="One interview per candidate, matched to every job. Hiring managers are interviewed too."
-        image={{ src: "/images/robot-reading.webp", alt: "The HireRevolution robot reading a resume" }}
+        image={{ src: "/images/robot-reading.webp", alt: "The HireRevolution AI robot reading a resume" }}
       />
 
       <Section title="Six questions to ask any AI interview vendor" subtitle="Ask every tool you're considering, us included.">
@@ -81,7 +81,7 @@ export default function CompareAiInterviewPage() {
         <Faq
           items={[
             {
-              q: "Can I use HireRevolution alongside an AI interview tool I already have?",
+              q: "Can I use HireRevolution AI alongside an AI interview tool I already have?",
               a: "Yes. Screening assesses who applied. We show who fits, applied or not.",
             },
             {

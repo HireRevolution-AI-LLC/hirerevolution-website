@@ -28,7 +28,7 @@ export default function AtsLayerDiagram() {
       <svg viewBox="0 0 420 400" className="w-full h-auto" role="img" aria-labelledby="ats-diagram-title" fontFamily={FONT}>
         <title id="ats-diagram-title">
           HireRevolution AI sits on top of your ATS. Jobs and candidates come up from your ATS; match analysis goes back
-          down to it. HireRevolution also adds job seekers and a wider-market search.
+          down to it. HireRevolution AI also adds job seekers and a wider-market search.
         </title>
 
         {/* More candidates, feeding into the layer */}

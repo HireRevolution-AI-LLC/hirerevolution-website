@@ -12,15 +12,15 @@ const atsShort = `${NAMED_ATS.slice(0, 5).join(", ")} and more`;
 
 export const metadata = pageMetadata({
   path: PATH,
-  title: "HireRevolution and Your ATS | HireRevolution AI",
-  description: `HireRevolution doesn't replace your applicant tracking system. It connects to ${atsShort}, and adds skills evidence to every candidate.`,
+  title: "HireRevolution AI and Your ATS | HireRevolution AI",
+  description: `HireRevolution AI doesn't replace your applicant tracking system. It connects to ${atsShort}, and adds skills evidence to every candidate.`,
 });
 
 export default function CompareAtsPage() {
   return (
     <main className="flex-1">
       <CompareHero
-        eyebrow="HireRevolution and your ATS"
+        eyebrow="HireRevolution AI and your ATS"
         title="Keep your ATS. Add the evidence."
         subtitle={`Works with ${atsShort}. No rip-and-replace.`}
         visual={<AtsLayerDiagram />}
@@ -29,7 +29,7 @@ export default function CompareAtsPage() {
       <Section title="Two jobs, side by side" subtitle="Your ATS stays the system of record. We do the matching.">
         <CompareTable
           left="Your ATS keeps"
-          right="HireRevolution adds"
+          right="HireRevolution AI adds"
           rows={[
             {
               topic: "The job",
