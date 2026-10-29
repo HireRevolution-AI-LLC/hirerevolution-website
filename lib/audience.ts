@@ -38,6 +38,7 @@ export const HOME: Record<Audience, string> = { hiring: "/", candidates: JOB_SEE
 export const NAV_LINKS: Record<Audience, { label: string; href: string }[]> = {
   hiring: [
     { label: "Features", href: "/features" },
+    { label: "Compare", href: "/compare" },
     { label: "Pricing", href: "/pricing" },
     { label: "Demo", href: "/demo" },
     { label: "About", href: "/about" },

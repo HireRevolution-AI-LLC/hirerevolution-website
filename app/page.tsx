@@ -37,7 +37,7 @@ export default function HiringHome() {
             Book a demo
           </Link>
           <Link href="/offers/submit-job-description" className={buttonClass.outlineOnDark}>
-            Try it free with a job
+            Try it free with your JD
           </Link>
         </div>
         <p className="mt-8 text-blue-200">
