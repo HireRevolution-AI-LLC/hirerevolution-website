@@ -91,7 +91,7 @@ export default async function HiringPricingPage() {
             <p className="text-blue-700 font-semibold text-sm uppercase tracking-wider mb-3">Limited-time offer</p>
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Try it free with one of your jobs</h2>
             <p className="text-lg text-gray-600 mb-6">
-              Submit your job description and we&apos;ll create it in HireRevolution and search for candidates, free.
+              Submit your job description and we&apos;ll create it in HireRevolution AI and show you matching candidates, free.
               The easiest way to see it work.
             </p>
             <Link href="/offers/submit-job-description" className={buttonClass.primary}>
