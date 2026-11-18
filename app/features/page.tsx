@@ -36,7 +36,6 @@ export default function HiringFeaturesPage() {
         <div className="grid md:grid-cols-2 gap-10">
           <YouTube id={VIDEOS.analysis.id} title={VIDEOS.analysis.title} />
           <YouTube id={VIDEOS.jd.id} title={VIDEOS.jd.title} />
-          <YouTube id={VIDEOS.stack.id} title={VIDEOS.stack.title} />
           <YouTube id={VIDEOS.fourClicks.id} title={VIDEOS.fourClicks.title} />
         </div>
       </Section>

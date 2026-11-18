@@ -25,7 +25,7 @@ export const HIRING_FEATURES: Feature[] = [
   {
     title: "Works with your ATS",
     description:
-      "JobDiva, Bullhorn, Lever, Recruit CRM and 40+ more. HireRevolution layers onto the tools you already use. No rip-and-replace.",
+      "JobDiva, Lever, Recruit CRM and 40+ more. HireRevolution layers onto the tools you already use. No rip-and-replace. Some ATS vendors charge their own API fees.",
     image: { src: "/images/robots-woman-coworker-coffee.webp", alt: "Robots at a desk with the HireRevolution dashboard" },
   },
   {
@@ -151,5 +151,7 @@ export const VIDEOS = {
   fourClicks: { id: "7cS9JwJ_gTc", title: "Find matched candidates in 4 clicks" },
   analysis: { id: "tMIhVxsSxsc", title: "Deep candidate analysis in seconds" },
   jd: { id: "h82VtWvdZ_4", title: "Build a smarter JD and find candidates you'd miss" },
-  stack: { id: "gogQ-2DdqTU", title: "Works with the stack you already run" },
+  // "Works with the stack you already run" (gogQ-2DdqTU) was removed on
+  // 2026-11-18. It names Bullhorn, and Bullhorn forbids vendors without a
+  // Bullhorn agreement from naming or marketing a Bullhorn integration.
 };

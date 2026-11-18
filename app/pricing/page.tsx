@@ -44,7 +44,8 @@ function HiringPlansFallback() {
         <div className="mb-8">
           <CheckList
             items={[
-              "ATS and HRIS integrations: JobDiva, Bullhorn, Lever, Recruit CRM and 40+ more",
+              "ATS and HRIS integrations: JobDiva, Lever, Recruit CRM and 40+ more",
+              "Some ATS vendors charge their own fees for API access, which may add to the cost of connecting them",
               "Every open role, across teams",
               "Priority support",
             ]}

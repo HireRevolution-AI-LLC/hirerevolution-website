@@ -101,7 +101,6 @@ export default function DemoPage() {
           <YouTube id={VIDEOS.fourClicks.id} title={VIDEOS.fourClicks.title} />
           <YouTube id={VIDEOS.analysis.id} title={VIDEOS.analysis.title} />
           <YouTube id={VIDEOS.jd.id} title={VIDEOS.jd.title} />
-          <YouTube id={VIDEOS.stack.id} title={VIDEOS.stack.title} />
         </div>
         <p className="text-center text-gray-600 mt-12">
           Looking for a job? The demo is for hiring teams.{" "}
