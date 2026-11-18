@@ -46,9 +46,11 @@ export const COMPARE_PAGES: ComparePage[] = [
  * have no Merge fallback, so they depend on #644/#646 merging.
  * The first five lead the hero.
  */
+// Bullhorn was removed on 2026-11-18 and must not be added back without a
+// signed Bullhorn agreement. Bullhorn forbids vendors without one from naming
+// or marketing a Bullhorn integration.
 export const NAMED_ATS = [
   "JobDiva",
-  "Bullhorn",
   "Greenhouse",
   "Lever",
   "Workday",

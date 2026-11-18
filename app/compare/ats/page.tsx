@@ -67,7 +67,6 @@ export default function CompareAtsPage() {
 
       <StatsBand />
 
-      {/* Not VIDEOS.stack: its integrations screen shows other vendors' logos. */}
       <Section tone="tint" title="See it work">
         <ProductVideo id={VIDEOS.fourClicks.id} title={VIDEOS.fourClicks.title} />
       </Section>
