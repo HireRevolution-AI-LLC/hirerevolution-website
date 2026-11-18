@@ -2,13 +2,13 @@ import Link from "next/link";
 import { Section } from "../../components/ui";
 import { CompareCards, CompareCta, CompareHero, CompareTable, Faq, ProductVideo, StatsBand } from "../components";
 import AtsLayerDiagram from "./AtsLayerDiagram";
-import { NAMED_ATS } from "@/lib/compare";
+import { ATS_NAMES_TEXT } from "@/lib/compare";
 import { VIDEOS } from "@/lib/content";
 import { pageMetadata } from "@/lib/metadata";
 
 const PATH = "/compare/ats";
-const atsList = `${NAMED_ATS.slice(0, -1).join(", ")} and ${NAMED_ATS.at(-1)}`;
-const atsShort = `${NAMED_ATS.slice(0, 5).join(", ")} and more`;
+const atsList = ATS_NAMES_TEXT;
+const atsShort = ATS_NAMES_TEXT;
 
 export const metadata = pageMetadata({
   path: PATH,

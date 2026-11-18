@@ -37,32 +37,19 @@ export const COMPARE_PAGES: ComparePage[] = [
 ];
 
 /**
- * ATSs we name. Policy (Gregg, 2026-10-28): an ATS is switched on when a
- * customer buys the connection, so we name every one with a planned path:
- * our own connector first (no per-connection fee), Merge as the fallback.
- * Native connectors for all of these were written 2026-10-28 in ai-hr-chatbot
- * PRs #643-#646 (Greenhouse and JobDiva already had one), tested with mocked
- * vendor APIs; none has run against a real customer yet. Recruit CRM and Loxo
- * have no Merge fallback, so they depend on #644/#646 merging.
- * The first five lead the hero.
+ * ATSs we name in public. Gregg, 2026-11-18: name only JobDiva and Workday,
+ * and say "and others" for the rest. Most ATS vendors' terms require their
+ * written permission before a vendor names them in marketing (Greenhouse,
+ * Lever, iCIMS, JobAdder, Loxo, Manatal, Breezy HR, Teamtailor), Zoho bans
+ * its name in paid ads, and Bullhorn forbids naming it without a signed
+ * agreement. Workday allows its name in plain text with a "not affiliated"
+ * line, which SiteFooter carries. JobDiva publishes no rule. Do not add a
+ * name here without checking that vendor's terms.
  */
-// Bullhorn was removed on 2026-11-18 and must not be added back without a
-// signed Bullhorn agreement. Bullhorn forbids vendors without one from naming
-// or marketing a Bullhorn integration.
-export const NAMED_ATS = [
-  "JobDiva",
-  "Greenhouse",
-  "Lever",
-  "Workday",
-  "Recruit CRM",
-  "Loxo",
-  "iCIMS",
-  "JobAdder",
-  "Manatal",
-  "Zoho Recruit",
-  "Teamtailor",
-  "Breezy HR",
-];
+export const NAMED_ATS = ["JobDiva", "Workday"];
+
+/** "JobDiva, Workday and others", for every place that lists ATSs. */
+export const ATS_NAMES_TEXT = `${NAMED_ATS.join(", ")} and others`;
 
 /**
  * Measured on production 2026-10-28 across the 259 candidates with a skills
