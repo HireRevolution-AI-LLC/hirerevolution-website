@@ -86,7 +86,10 @@ export default function SiteFooter() {
           ))}
         </div>
         <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row gap-4 justify-between items-center text-gray-600 text-sm">
-          <span>© {new Date().getFullYear()} HireRevolution AI. All rights reserved.</span>
+          <span>
+            © {new Date().getFullYear()} HireRevolution AI. All rights reserved. HireRevolution AI is not affiliated
+            with Workday, Inc.
+          </span>
           <ul className="flex flex-wrap gap-x-5 gap-y-1 justify-center">
             {LEGAL_LINKS.map((l) => (
               <li key={l.href}>
