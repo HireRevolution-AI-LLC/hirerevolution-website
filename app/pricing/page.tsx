@@ -76,6 +76,9 @@ export default async function HiringPricingPage() {
               Every plan includes skills-based candidate ranking, automatic candidate search, the AI job description
               builder, Standout Signals, AI intros and in-app interview scheduling.
             </p>
+            <p className="text-center text-sm text-gray-500 mt-3">
+              Some ATS vendors charge their own fees for API access, which may add to the cost of connecting them.
+            </p>
           </>
         ) : (
           <HiringPlansFallback />
