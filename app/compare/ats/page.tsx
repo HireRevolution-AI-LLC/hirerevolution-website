@@ -82,7 +82,9 @@ export default function CompareAtsPage() {
               q: "Which applicant tracking systems do you work with?",
               a: (
                 <>
-                  {atsList}. Don&apos;t see yours?{" "}
+                  {atsList}. We&apos;ve built connections for dozens of ATS and HRIS platforms. When you sign on, we
+                  set yours up and test it with your account, and if anything doesn&apos;t work the way it should, we fix
+                  it. Don&apos;t see yours?{" "}
                   <Link href="/contact-sales" className="text-blue-700 font-semibold hover:text-blue-800">
                     Ask us
                   </Link>
