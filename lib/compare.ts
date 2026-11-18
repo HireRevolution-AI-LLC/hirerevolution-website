@@ -38,13 +38,21 @@ export const COMPARE_PAGES: ComparePage[] = [
 
 /**
  * ATSs we name in public. Gregg, 2026-11-18: name only JobDiva and Workday,
- * and say "and others" for the rest. Most ATS vendors' terms require their
- * written permission before a vendor names them in marketing (Greenhouse,
- * Lever, iCIMS, JobAdder, Loxo, Manatal, Breezy HR, Teamtailor), Zoho bans
- * its name in paid ads, and Bullhorn forbids naming it without a signed
- * agreement. Workday allows its name in plain text with a "not affiliated"
- * line, which SiteFooter carries. JobDiva publishes no rule. Do not add a
- * name here without checking that vendor's terms.
+ * and say "and others" for the rest.
+ *
+ * This list is a business choice, not a legal limit. Trademark law lets us
+ * name a vendor in plain, accurate text with no logo and no claim of a
+ * partnership. A vendor's own naming rules bind us only once we agree to its
+ * terms, for example by using its API. Most vendors publish such rules
+ * (Greenhouse, Lever, iCIMS, JobAdder, Loxo, Manatal, Breezy HR, Teamtailor
+ * ask for permission; Zoho bans its name in paid ads), and a vendor whose API
+ * we rely on can cut off access. Bullhorn is not named at all while there is
+ * no Bullhorn agreement.
+ *
+ * Every name here must also appear in SiteFooter's "not affiliated" line.
+ * Never use a vendor's logo, and never call us its "partner", "certified",
+ * "official" or "authorized" integration without a signed agreement. Check
+ * the vendor's terms before adding a name.
  */
 export const NAMED_ATS = ["JobDiva", "Workday"];
 
