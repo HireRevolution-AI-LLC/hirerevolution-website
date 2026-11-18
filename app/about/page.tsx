@@ -93,7 +93,7 @@ export default function AboutPage() {
               <li className="flex items-start">
                 <span className="text-blue-600 font-bold mr-3 mt-1">✓</span>
                 <span>
-                  <strong>Works with what you already use.</strong> We integrate with 40+ ATS platforms—no rip-and-replace, no new workflow. Just better matching on top of your existing tools.
+                  <strong>Works with what you already use.</strong> We&apos;ve built connections for dozens of ATS and HRIS platforms, with assessments and background checks coming soon. When you sign on, we set yours up and test it with your account. If anything doesn&apos;t work the way it should, we fix it. Your workflows don&apos;t change.
                 </span>
               </li>
             </ul>

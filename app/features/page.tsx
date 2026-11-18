@@ -9,7 +9,7 @@ export const metadata = pageMetadata({
   path: "/features",
   title: "Features for Hiring Teams | HireRevolution AI",
   description:
-    "Automatic candidate search, skills-based ranking, 40+ ATS integrations, candidate sourcing, shareable ranked shortlists, an AI job description builder, Standout Signals, AI intros and interview scheduling.",
+    "Automatic candidate search, skills-based ranking, ATS connections, candidate sourcing, shareable ranked shortlists, an AI job description builder, Standout Signals, AI intros and interview scheduling.",
 });
 
 export default function HiringFeaturesPage() {

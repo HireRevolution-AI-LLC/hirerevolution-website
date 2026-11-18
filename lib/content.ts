@@ -25,7 +25,7 @@ export const HIRING_FEATURES: Feature[] = [
   {
     title: "Works with your ATS",
     description:
-      "JobDiva, Workday and others. HireRevolution layers onto the tools you already use. No rip-and-replace. Some ATS vendors charge their own API fees.",
+      "Keep JobDiva, Workday or whichever ATS you use. We've built connections for dozens of ATS and HRIS platforms, with assessments and background checks coming soon. When you sign on, we set yours up and test it with your account. If anything doesn't work the way it should, we fix it. Some ATS vendors charge their own API fees.",
     image: { src: "/images/robots-woman-coworker-coffee.webp", alt: "Robots at a desk with the HireRevolution dashboard" },
   },
   {
