@@ -101,7 +101,7 @@ export const HIRING_COMING_SOON: Feature[] = [
 /** Auto-search for jobs leads: it is the Tier 1 candidate feature and free for a limited time. */
 export const CANDIDATE_FEATURES: Feature[] = [
   {
-    title: "Auto-search finds jobs for you",
+    title: "Auto-search surfaces jobs that match you",
     description:
       "Finish your profile and our AI searches for jobs that match your skills, then keeps bringing new ones to you even when you're not looking. Searching yourself is always free.",
     image: { src: "/images/robot-reading.webp", alt: "Robot reading through job listings" },
@@ -130,7 +130,7 @@ export const CANDIDATE_FEATURES: Feature[] = [
 /** Auto-search will be a paid upgrade; for now it's free. Remove the promo when that ends. */
 export const AUTO_SEARCH_PROMO = {
   badge: "Free for a limited time",
-  title: "Let auto-search find jobs for you",
+  title: "Let auto-search do the searching",
   body: "Most job sites make you do the searching. Auto-search doesn't. It keeps looking for jobs that match your skills and brings them straight to you.",
   urgency: "Auto-search will be a paid upgrade. Right now it's free, so use it while you can!",
 };
